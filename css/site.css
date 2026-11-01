@@ -1,0 +1,79 @@
+/*
+ * 合同会社ミームスフィアのサイト共通スタイル。
+ * ヘッダーは社名を左、TOP / COMPANY / メニューを右に置く。
+ * トップの背景星空は #starfield（色反転した星のみ。定義の星は置かない）。
+ * 余白の数値や新しい装飾セクションは持たない。
+ */
+
+body {
+  margin: 0;
+  color: #04040a;
+  background: #fbfbf5;
+  font-family: sans-serif;
+}
+
+.starfield {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.brand,
+.header-links a,
+.menu > summary {
+  white-space: nowrap;
+}
+
+.header-links {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul ul {
+  padding-left: 1rem;
+}
+
+.menu {
+  position: relative;
+}
+
+.menu > ul {
+  position: absolute;
+  right: 0;
+  background: #fbfbf5;
+}
+
+footer nav ul {
+  display: flex;
+  gap: 1rem;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
