@@ -1,14 +1,36 @@
 /*
  * 合同会社ミームスフィアのサイト共通スタイル。
- * ヘッダーは社名を左、TOP / COMPANY / メニューを右に置く。
- * トップの背景星空は #starfield（色反転した星のみ。定義の星は置かない）。
- * 余白の数値や新しい装飾セクションは持たない。
+ * 背景はごく薄い青（--sky）。星空キャンバス #starfield が全ページの背面。
+ * ヘッダーとフッターとテキストエリアは Wordsphere ナビと同様の半透明
+ * （backdrop-blur-md = 12px、白の透過、境界線）。
+ * セクションタイトルとサブタイトルの縁取りは Wordsphere LP 先頭の text-shadow。
+ * 各セクションは全画面。タイトルは上半分、サブタイトルやリンクは下半分。中央寄せ。
+ * 暗い宇宙色は使わない。ロゴマークは置かない。
  */
+
+:root {
+  --sky: color-mix(in srgb, #6673cc 16%, white);
+  --ink: #6673cc;
+  --title: rgba(255, 255, 255, 0.9);
+  --subtitle: rgba(255, 255, 255, 0.75);
+  --outline: 0 1px 2px #000, 0 -1px 2px #000, 1px 0 2px #000, -1px 0 2px #000, 0 0 10px #000, 0 0 20px rgba(0, 0, 0, 0.7);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-edge: color-mix(in srgb, #6673cc 35%, transparent);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-snap-type: y proximity;
+  background: var(--sky);
+}
 
 body {
   margin: 0;
-  color: #04040a;
-  background: #fbfbf5;
+  background: var(--sky);
+  color: var(--ink);
   font-family: sans-serif;
 }
 
@@ -21,18 +43,40 @@ body {
   pointer-events: none;
 }
 
-body > header,
 body > main,
 body > footer {
   position: relative;
   z-index: 1;
 }
 
+header,
+footer,
+.text-area,
+.shot-grid figure {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--glass-edge);
+  text-align: center;
 }
 
 .brand,
@@ -46,6 +90,13 @@ header {
   align-items: flex-start;
   gap: 1rem;
   margin-left: auto;
+}
+
+header a,
+footer a,
+.menu > summary {
+  color: var(--ink);
+  text-decoration: none;
 }
 
 nav ul {
@@ -62,18 +113,179 @@ nav ul ul {
   position: relative;
 }
 
+.menu > summary {
+  cursor: pointer;
+}
+
 .menu > ul {
   position: absolute;
   right: 0;
-  background: #fbfbf5;
+  z-index: 3;
+  padding: 0.5rem 1rem;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-edge);
+  text-align: left;
 }
 
 footer nav ul {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
+.copyright {
+  margin: 1rem 0 0;
+  text-align: center;
+}
+
+main section {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  padding-inline: 1.5rem;
+}
+
+main section.band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section-upper,
+.section-lower {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+.section-upper {
+  flex: 0 0 50vh;
+  padding-top: 3.5rem;
+}
+
+.section-lower {
+  flex: 1 0 auto;
+  min-height: 50vh;
+}
+
+.section-upper h1,
+.section-upper h2 {
+  margin: 0;
+  color: var(--title);
+  font-size: clamp(2rem, 10vw, 6rem);
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-shadow: var(--outline);
+}
+
+.subtitle {
+  margin: 0.75rem 0 0;
+  color: var(--subtitle);
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  text-align: center;
+  text-shadow: var(--outline);
+}
+
+@media (min-width: 40rem) {
+  .subtitle {
+    letter-spacing: 0.2em;
+  }
+}
+
+.subtitle a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.text-area {
+  width: min(100%, 48rem);
+  padding: 1rem 1.5rem 1.25rem;
+  border: 1px solid var(--glass-edge);
+  text-align: center;
+}
+
+main section.gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 4.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.shot-grid {
+  width: min(100%, 72rem);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.shot-grid figure {
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--glass-edge);
+  text-align: center;
+}
+
+.shot-grid figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+#overview dl {
+  display: grid;
+  justify-items: center;
+  gap: 1.5rem;
+  margin: 0;
+}
+
+#overview dt,
+#overview dd {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  text-align: center;
+}
+
+#philosophy .text-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#philosophy p,
+#philosophy li {
+  margin: 0;
+  line-height: 1.8;
+  text-align: center;
+}
+
+#philosophy ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 img {
+  display: block;
   max-width: 100%;
   height: auto;
+  margin-inline: auto;
+}
+
+@media (max-width: 40rem) {
+  .shot-grid {
+    grid-template-columns: 1fr;
+  }
 }

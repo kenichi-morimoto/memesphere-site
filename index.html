@@ -1,7 +1,9 @@
 <!--
   合同会社ミームスフィアのトップ。
-  セクションは MEMESPHERE / WORDSPHERE / FUTURE WORK の縦並び。
-  背景は色反転した星空（定義の星は置かない）。
+  セクションは MEMESPHERE / WORDSPHERE / FUTURE WORK。各セクションは全画面。
+  上半分がタイトル、下半分がサブタイトルとリンク。
+  WORDSPHERE はサービスページ /wordsphere/ へ進む。
+  背景は全ページ共通の青空の星空（定義の星は置かない）。
 -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -34,19 +36,37 @@
     </nav>
   </header>
   <main>
-    <section id="section-memesphere">
-      <h1>MEMESPHERE</h1>
-      <p>人と人との繋がりを考える会社です。</p>
-      <p>人と人々の振る舞いについて科学する会社です。</p>
+    <section id="section-memesphere" class="band">
+      <div class="section-upper">
+        <h1>MEMESPHERE</h1>
+      </div>
+      <div class="section-lower">
+        <div class="text-area">
+          <p class="subtitle">人と人との繋がりを考える会社です。</p>
+          <p class="subtitle">人と人々の振る舞いについて科学する会社です。</p>
+        </div>
+      </div>
     </section>
-    <section id="section-wordsphere">
-      <h2>WORDSPHERE</h2>
-      <p>言葉の定義の違いから"人間"を浮かび上がらせるサービスです。</p>
-      <p><a href="https://wordsphere-beta.vercel.app/">Wordsphereのページへ</a></p>
+    <section id="section-wordsphere" class="band">
+      <div class="section-upper">
+        <h2>WORDSPHERE</h2>
+      </div>
+      <div class="section-lower">
+        <div class="text-area">
+          <p class="subtitle">言葉の定義の違いから"人間"を浮かび上がらせるサービスです。</p>
+          <p class="subtitle"><a href="/wordsphere/">Wordsphereのページへ</a></p>
+        </div>
+      </div>
     </section>
-    <section id="section-future">
-      <h2>FUTURE WORK</h2>
-      <p>人の作動原理を源泉として、社会にインパクトを与えていきます。</p>
+    <section id="section-future" class="band">
+      <div class="section-upper">
+        <h2>FUTURE WORK</h2>
+      </div>
+      <div class="section-lower">
+        <div class="text-area">
+          <p class="subtitle">人の作動原理を源泉として、社会にインパクトを与えていきます。</p>
+        </div>
+      </div>
     </section>
   </main>
   <footer>
@@ -57,6 +77,7 @@
         <li><a href="/company/">COMPANY</a></li>
       </ul>
     </nav>
+    <p class="copyright">© 合同会社ミームスフィア</p>
   </footer>
   <script src="js/starfield.js"></script>
 </body>

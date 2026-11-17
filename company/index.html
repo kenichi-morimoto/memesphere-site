@@ -1,6 +1,8 @@
 <!--
   カンパニー。
   会社概要は社名と設立日だけ。企業理念は指定の文言をそのまま出す。
+  文章は足さない。少ないテキストは全画面の上下分割で置く。
+  背景は全ページ共通の青空の星空。
 -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -11,6 +13,7 @@
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
+  <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
   <header>
     <span class="brand">合同会社ミームスフィア</span>
     <nav class="header-links" aria-label="ヘッダー">
@@ -32,22 +35,34 @@
     </nav>
   </header>
   <main>
-    <section id="overview">
-      <h1>会社概要</h1>
-      <dl>
-        <dt>社名</dt>
-        <dd>合同会社ミームスフィア（Memesphere G.K.）</dd>
-        <dt>設立</dt>
-        <dd>2020年5月1日</dd>
-      </dl>
+    <section id="overview" class="band">
+      <div class="section-upper">
+        <h1>会社概要</h1>
+      </div>
+      <div class="section-lower">
+        <div class="text-area">
+          <dl>
+            <dt>社名</dt>
+            <dd>合同会社ミームスフィア（Memesphere G.K.）</dd>
+            <dt>設立</dt>
+            <dd>2020年5月1日</dd>
+          </dl>
+        </div>
+      </div>
     </section>
-    <section id="philosophy">
-      <h1>企業理念</h1>
-      <p>人と文化の根源にある"ミーム"の性質を探求することにより、人と社会により効果的に働きかけ、より良い人類の未来を作ること</p>
-      <ul>
-        <li>リチャード・ドーキンスが「利己的な遺伝子」で提唱した概念"ミーム"は、遺伝子が生物を形作っているように、人の行動や文化を形作るとされています。そして遺伝子操作が生物のあり様を変える様に、"ミーム操作"は人や社会のあり様を変えることになるでしょう。</li>
-        <li>遺伝子工学に光と闇があるように、ミームの操作（ミーム工学）にも光と闇があります。Memesphereは、さまざまなサービスを通して「よいミーム操作」を広め、人類が自らをより深く理解し、その理解を持ってよりよく自らを変革していくことの一助となることを目標としています。</li>
-      </ul>
+    <section id="philosophy" class="band">
+      <div class="section-upper">
+        <h1>企業理念</h1>
+      </div>
+      <div class="section-lower">
+        <div class="text-area">
+          <p>人と文化の根源にある"ミーム"の性質を探求することにより、人と社会により効果的に働きかけ、より良い人類の未来を作ること</p>
+          <ul>
+            <li>リチャード・ドーキンスが「利己的な遺伝子」で提唱した概念"ミーム"は、遺伝子が生物を形作っているように、人の行動や文化を形作るとされています。そして遺伝子操作が生物のあり様を変える様に、"ミーム操作"は人や社会のあり様を変えることになるでしょう。</li>
+            <li>遺伝子工学に光と闇があるように、ミームの操作（ミーム工学）にも光と闇があります。Memesphereは、さまざまなサービスを通して「よいミーム操作」を広め、人類が自らをより深く理解し、その理解を持ってよりよく自らを変革していくことの一助となることを目標としています。</li>
+          </ul>
+        </div>
+      </div>
     </section>
   </main>
   <footer>
@@ -58,6 +73,8 @@
         <li><a href="/company/">COMPANY</a></li>
       </ul>
     </nav>
+    <p class="copyright">© 合同会社ミームスフィア</p>
   </footer>
+  <script src="../js/starfield.js"></script>
 </body>
 </html>

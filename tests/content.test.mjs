@@ -1,7 +1,7 @@
 /**
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
- * ロゴ画像と概念図が無いことを見る。
+ * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライトを見る。
  */
 
 import assert from "node:assert/strict";
@@ -31,7 +31,7 @@ const ALLOWED_IMAGES = new Set([
 ]);
 
 function textOf(html, id) {
-  const match = html.match(new RegExp(`<section id="${id}">([\\s\\S]*?)</section>`));
+  const match = html.match(new RegExp(`<section id="${id}"[^>]*>([\\s\\S]*?)</section>`));
   assert.ok(match, `#${id} が無い`);
   return match[1].replace(/<[^>]+>/g, "").replace(/\n\s*/g, "");
 }
@@ -59,7 +59,7 @@ test("サービス名は WORDSPHERE で WORDWPHERE が無い", () => {
   assert.equal(textOf(serviceHtml, "overview").includes("WORDWPHERE"), false);
   assert.equal(siteText.includes("WORDWPHERE"), false);
   assert.equal(
-    serviceHtml.match(/<p id="concept">([\s\S]*?)<\/p>/)[1].trim(),
+    serviceHtml.match(/<p id="concept"[^>]*>([\s\S]*?)<\/p>/)[1].trim(),
     '言葉の定義の違いから"人間"を浮かび上がらせるサービスです。',
   );
 });
@@ -101,8 +101,32 @@ test("ロゴ画像ファイルと概念図ファイルが無い", () => {
   ]);
 });
 
-test("Wordsphere へのリンクは公開中のホストだけ", () => {
-  assert.match(indexHtml, /href="https:\/\/wordsphere-beta\.vercel\.app\/"/);
+test("トップの WORDSPHERE はサービスページへ進み、本体ホストへは飛ばない", () => {
+  const section = indexHtml.match(/<section id="section-wordsphere"[^>]*>([\s\S]*?)<\/section>/)[1];
+  assert.match(section, /<a href="\/wordsphere\/">Wordsphereのページへ<\/a>/);
+  assert.equal(section.includes("wordsphere-beta.vercel.app"), false);
+  assert.equal(siteText.includes("wordsphere-beta.vercel.app"), false);
   assert.equal(siteText.includes("wordsphere.net"), false);
   assert.equal(siteText.includes("wordsphere.com"), false);
+});
+
+test("コピーライトはフッターの一番下に社名だけで、年が無い", () => {
+  const mark = '<p class="copyright">© 合同会社ミームスフィア</p>';
+  for (const html of [indexHtml, serviceHtml, companyHtml]) {
+    assert.match(html, new RegExp(`${mark}\\s*</footer>`));
+    const line = html.match(/<p class="copyright">([^<]*)<\/p>/)[1];
+    assert.equal(line, "© 合同会社ミームスフィア");
+    assert.equal(/\d{4}/.test(line), false);
+  }
+});
+
+test("星空は全ページ共通で、定義の星を置かない", () => {
+  const sky = readFileSync(join(root, "js/starfield.js"), "utf8");
+  for (const html of [indexHtml, serviceHtml, companyHtml]) {
+    assert.match(html, /<canvas id="starfield"/);
+    assert.match(html, /starfield\.js/);
+  }
+  assert.match(sky, /WORD_COUNT/);
+  assert.match(sky, /USER_COUNT/);
+  assert.equal(/definition/i.test(sky), false);
 });
