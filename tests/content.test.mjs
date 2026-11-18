@@ -4,7 +4,8 @@
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
  * 全ページは LP の星系。背景のクリームは残し、星と線とラベルは寒色。
  * ヘッダーとフッターと本文の板が無いこと、文字が濃色の細字で、
- * 空の色の後光があること、タイトルのグリフ中点が字間の分だけ戻ることを見る。
+ * 空の色の後光があること、ヘッダーとフッターも同じ後光であること、
+ * タイトルのグリフ中点が字間の分だけ戻ることを見る。
  */
 
 import assert from "node:assert/strict";
@@ -222,6 +223,11 @@ test("全ページのタイトルと本文は濃色の細字で、クリーム�
   assert.ok(chromeRule, "ヘッダーとフッターの文字色が無い");
   assert.match(chromeRule[0], /color:\s*#04040a/);
   assert.equal(/text-shadow/.test(chromeRule[0]), false);
+  const halo = siteCss.match(/^header,\s*footer \{\s*text-shadow:([^}]+)\}/m);
+  assert.ok(halo, "ヘッダーとフッターの後光が無い");
+  assert.match(halo[1], /#fbfbf5/);
+  assert.equal(/#000/.test(halo[1]), false);
+  assert.equal(/var\(--outline\)/.test(halo[1]), false);
   assert.match(
     siteCss,
     /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*color:\s*#04040a/,
