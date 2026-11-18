@@ -27,7 +27,6 @@
 }
 
 html {
-  scroll-snap-type: y proximity;
   background: #fbfbf5;
 }
 
@@ -155,7 +154,6 @@ footer nav ul {
 
 main section {
   min-height: 100vh;
-  scroll-snap-align: start;
   padding-inline: 1.5rem;
 }
 

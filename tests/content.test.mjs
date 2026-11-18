@@ -6,6 +6,7 @@
  * ヘッダーとフッターと本文の板が無いこと、文字が濃色の細字で、
  * 空の色の後光があること、ヘッダーとフッターも同じ後光であること、
  * タイトルのグリフ中点が字間の分だけ戻ることを見る。
+ * 縦スクロールはページ境界へ引き戻さない。
  */
 
 import assert from "node:assert/strict";
@@ -161,6 +162,15 @@ test("全ページの星空は LP の星系のまま、星と線とラベルは�
   assert.equal(landing.includes("115,115,55"), false);
   assert.equal(landing.includes("145,135,45"), false);
   assert.match(landing, /#6673cc/);
+});
+
+test("縦スクロールはページ境界へ引き戻さない", () => {
+  assert.equal(/scroll-snap-type/.test(siteCss), false);
+  assert.equal(/scroll-snap-align/.test(siteCss), false);
+  assert.match(siteCss, /main section\s*\{[^}]*min-height:\s*100vh/);
+  assert.match(siteCss, /html\.home #section-memesphere\s*\{[^}]*height:\s*100vh/);
+  const ids = [...indexHtml.matchAll(/<section id="([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(ids, ["section-memesphere", "section-wordsphere", "section-future"]);
 });
 
 test("トップのタイトルはセクション中央で、他ページの上下分割は残す", () => {
