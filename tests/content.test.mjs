@@ -2,7 +2,8 @@
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
- * トップの色反転した LP 星空と中央配置、他ページの背景を見る。
+ * トップの色反転した LP 星空と中央配置、他ページの背景、
+ * トップだけ板が無いことを見る。
  */
 
 import assert from "node:assert/strict";
@@ -168,4 +169,26 @@ test("トップのタイトルはセクション中央で、他ページの上�
   assert.match(companyHtml, /section-upper/);
   assert.match(serviceHtml, /section-upper/);
   assert.match(siteCss, /\.section-upper\s*\{[^}]*50vh/);
+});
+
+test("トップのヘッダーとフッターと本文の板が無く、他ページの板は残る", () => {
+  const homePlate =
+    /html\.home header,\s*html\.home footer,\s*html\.home \.text-area\s*\{[^}]*\}/;
+  const plate = siteCss.match(homePlate);
+  assert.ok(plate, "トップの板を外す指定が無い");
+  assert.match(plate[0], /background:\s*none/);
+  assert.match(plate[0], /backdrop-filter:\s*none/);
+  assert.match(plate[0], /-webkit-backdrop-filter:\s*none/);
+  assert.match(plate[0], /border:\s*none/);
+  assert.match(
+    siteCss,
+    /header,\s*footer,\s*\.text-area,\s*\.shot-grid figure\s*\{[^}]*background:\s*var\(--glass\)/,
+  );
+  assert.match(
+    siteCss,
+    /header,\s*footer,\s*\.text-area,\s*\.shot-grid figure\s*\{[^}]*backdrop-filter:\s*blur\(12px\)/,
+  );
+  assert.match(siteCss, /^header \{[^}]*border-bottom:\s*1px solid var\(--glass-edge\)/m);
+  assert.match(siteCss, /^footer \{[^}]*border-top:\s*1px solid var\(--glass-edge\)/m);
+  assert.match(siteCss, /^\.text-area \{[^}]*border:\s*1px solid var\(--glass-edge\)/m);
 });
