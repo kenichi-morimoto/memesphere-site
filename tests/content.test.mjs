@@ -2,7 +2,7 @@
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
- * トップの色反転した LP 星空と中央配置、他ページの背景、
+ * トップは LP の星系。背景のクリームは残し、星と線とラベルは寒色。他ページの背景、
  * トップだけ板が無いこと、トップの文字が濃色の細字で、
  * 空の色の後光があること、タイトルのグリフ中点が字間の分だけ戻ることを見る。
  */
@@ -131,7 +131,7 @@ test("コピーライトはフッターの一番下に社名だけで、年が�
   }
 });
 
-test("トップの星空は LP の星系を色反転し、他ページの背景は変えない", () => {
+test("トップの星空は LP の星系のまま、星と線とラベルは寒色で、他ページは変えない", () => {
   const landing = readFileSync(join(root, "js/landing-sky.js"), "utf8");
   const serviceSky = readFileSync(join(root, "js/starfield.js"), "utf8");
   assert.match(indexHtml, /js\/landing-sky\.js/);
@@ -151,6 +151,14 @@ test("トップの星空は LP の星系を色反転し、他ページの背景�
   assert.match(landing, /BG_STAR_COUNT = 2500/);
   assert.match(landing, /#04040a/);
   assert.match(landing, /function invertAdditive/);
+  assert.match(landing, /invertAdditive\(hexToRgb01\(LP_BG\), 0\)/);
+  assert.equal((landing.match(/invertAdditive\(/g) || []).length, 2);
+  assert.match(landing, /function coolOnCream/);
+  assert.match(landing, /coolOnCream\(mixed\)/);
+  assert.match(landing, /coolOnCream\(hexToRgb01\(LP_NODE_COLOR/);
+  assert.equal(landing.includes("115,115,55"), false);
+  assert.equal(landing.includes("145,135,45"), false);
+  assert.match(landing, /#6673cc/);
   assert.match(serviceSky, /WORD_COUNT/);
   assert.match(serviceSky, /USER_COUNT/);
   assert.equal(/definition/i.test(serviceSky), false);

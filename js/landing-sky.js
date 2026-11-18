@@ -3,7 +3,9 @@
  * Wordsphere の LP 先頭（landing / generateStarSystems）と同じ星系を描く。
  * 星の種類（背景星、単語、ユーザー、定義、原始星、孤立星）、配置、
  * ランディング周回、定義の平面リング、線、原始星の瞬きは LP の最初の画面に合わせる。
- * 変えているのは色だけ。LP の色を加算合成した画素を反転する。
+ * 背景だけ LP の暗色を反転したクリーム #fbfbf5。星・線・ラベルは LP の寒色
+ * （青紫、#6673cc の系統）を反転せず、クリーム地で読める明度にする。
+ * 彩度は #6673cc 付近に抑え、薄い #c8c8e0 や #c2b7ff のまま塗らない。
  * サービスとカンパニーはこのファイルを読まない。
  */
 
@@ -445,6 +447,41 @@ function hsl2rgb(h, s, l) {
   });
 }
 
+function rgbToHsl(rgb) {
+  const [r, g, b] = rgb;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0.645, 0, l];
+  const d = max - min;
+  const s = d / (1 - Math.abs(2 * l - 1));
+  let h;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  h /= 6;
+  if (h < 0) h += 1;
+  return [h, s, l];
+}
+
+/** LP の色相を青紫に収め、明度をクリーム地で読める範囲へ落とす。彩度は上げすぎない。 */
+function coolOnCream(rgb01) {
+  let [h, s, l] = rgbToHsl(rgb01);
+  if (h < 0.56 || h > 0.78) {
+    const span = 0.22;
+    h = 0.56 + ((h % span) + span) % span;
+  }
+  s = Math.min(0.5, Math.max(s, 0.32));
+  if (l > 0.5) l = 0.44;
+  else if (l < 0.36) l = 0.4;
+  return hsl2rgb(h, s, l);
+}
+
+function rgbaCss(rgb01, alpha) {
+  const rgb = rgb01.map((channel) => Math.round(channel * 255));
+  return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+}
+
 function smoothstep(edge0, edge1, x) {
   const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
@@ -460,7 +497,7 @@ function edgeRgb(t, phase, posSum) {
   const base = [0.25, 0.25, 0.55];
   const color = base.map((channel, i) => channel + (iri[i] - channel) * burst * 0.85);
   const alpha = 0.04 + pulse * 0.06 + burst * 0.35;
-  return invertAdditive(color, alpha);
+  return { color: coolOnCream(color), alpha: Math.min(1, 0.72 + alpha) };
 }
 
 function stepProto(t) {
@@ -545,9 +582,9 @@ function frame(now) {
     const point = project(viewOf(pose, spun.x, spun.y, spun.z), viewW, viewH, focal, aspect);
     if (!point) continue;
     const diameter = star.size * (200 / point.depth);
-    const alpha = star.bright * 0.8;
     const mixed = mixBgColor(star.bright);
-    ctx.fillStyle = rgbCss(invertAdditive(mixed, alpha));
+    const alpha = 0.88 + star.bright * 0.12;
+    ctx.fillStyle = rgbaCss(coolOnCream(mixed), alpha);
     ctx.beginPath();
     ctx.arc(point.sx, point.sy, Math.max(diameter * 0.5, 0.3), 0, Math.PI * 2);
     ctx.fill();
@@ -561,7 +598,8 @@ function frame(now) {
     const pb = project(viewOf(pose, b.x, b.y, b.z), viewW, viewH, focal, aspect);
     if (!pa || !pb) continue;
     const posSum = (a.x + a.y + a.z + b.x + b.y + b.z) * 0.5;
-    ctx.strokeStyle = rgbCss(edgeRgb(t, edge.phase, posSum));
+    const drawn = edgeRgb(t, edge.phase, posSum);
+    ctx.strokeStyle = rgbaCss(drawn.color, drawn.alpha);
     ctx.beginPath();
     ctx.moveTo(pa.sx, pa.sy);
     ctx.lineTo(pb.sx, pb.sy);
@@ -575,9 +613,9 @@ function frame(now) {
     const pb = project(viewOf(pose, to.x, to.y, to.z), viewW, viewH, focal, aspect);
     if (pa && pb) {
       const hue = ((t * 0.04) % 1 + 1) % 1;
-      const color = hsl2rgb(hue, 0.65, 0.55);
-      const alpha = protoProgress * 0.5 * 0.75;
-      ctx.strokeStyle = rgbCss(invertAdditive(color, alpha));
+      const color = coolOnCream(hsl2rgb(hue, 0.5, 0.48));
+      const alpha = Math.min(1, 0.62 + protoProgress * 0.38);
+      ctx.strokeStyle = rgbaCss(color, alpha);
       ctx.beginPath();
       ctx.moveTo(pa.sx, pa.sy);
       ctx.lineTo(pb.sx, pb.sy);
@@ -606,8 +644,8 @@ function frame(now) {
   }
   visible.sort((a, b) => b.depth - a.depth);
   for (const star of visible) {
-    const rgb01 = hexToRgb01(LP_NODE_COLOR[star.node.type]);
-    ctx.fillStyle = rgbCss(invertAdditive(rgb01, NODE_OPACITY[star.node.type]));
+    const rgb01 = coolOnCream(hexToRgb01(LP_NODE_COLOR[star.node.type]));
+    ctx.fillStyle = rgbaCss(rgb01, Math.max(NODE_OPACITY[star.node.type], 0.92));
     ctx.beginPath();
     ctx.arc(star.sx, star.sy, Math.max(star.radiusPx, 0.4), 0, Math.PI * 2);
     ctx.fill();
@@ -640,11 +678,13 @@ function frame(now) {
       const fontSize = Math.min(19, fitted);
       if (!(fontSize > 2)) continue;
       ctx.font = `400 ${fontSize}px ${fontFamily}`;
-      ctx.fillStyle = `rgba(115,115,55,${0.85 * opacity})`;
     } else {
       ctx.font = `300 11px ${fontFamily}`;
-      ctx.fillStyle = `rgba(145,135,45,${0.95 * opacity})`;
     }
+    const ink = coolOnCream(hexToRgb01(LP_NODE_COLOR[item.star.node.type]));
+    const rgb = ink.map((channel) => Math.round(channel * 255));
+    const weight = item.star.node.type === "Word" ? 0.92 : 0.96;
+    ctx.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${weight * opacity})`;
     ctx.fillText(item.star.node.label, item.star.sx, item.star.sy);
   }
 
