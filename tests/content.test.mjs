@@ -2,6 +2,8 @@
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
+ * 製品ページは PRODUCTS の下の WORDSPHERE から全画面モーダルを開く。
+ * モーダルの平面は LP / wordflow / search。profile はモーダルに使わない。
  * 全ページは LP の星系。背景のクリームは残し、星と線とラベルは寒色。
  * ヘッダーとフッターと本文の板が無いこと、文字が濃色の細字で、
  * 空の色の後光があること、ヘッダーとフッターも同じ後光であること、
@@ -21,11 +23,13 @@ const indexHtml = readFileSync(join(root, "index.html"), "utf8");
 const serviceHtml = readFileSync(join(root, "products/index.html"), "utf8");
 const companyHtml = readFileSync(join(root, "company/index.html"), "utf8");
 const siteCss = readFileSync(join(root, "css/site.css"), "utf8");
+const modalJs = readFileSync(join(root, "js/concept-modal.js"), "utf8");
 const siteText = [
   indexHtml,
   serviceHtml,
   companyHtml,
   siteCss,
+  modalJs,
   readFileSync(join(root, "js/starfield.js"), "utf8"),
   readFileSync(join(root, "js/landing-sky.js"), "utf8"),
 ].join("\n");
@@ -67,13 +71,49 @@ test("セクション1のサブタイトルは1行", () => {
 });
 
 test("サービス名は WORDSPHERE で WORDWPHERE が無い", () => {
-  assert.match(serviceHtml, /<h1>\s*WORDSPHERE\s*<\/h1>/);
-  assert.equal(textOf(serviceHtml, "overview").includes("WORDWPHERE"), false);
+  assert.match(serviceHtml, /<h1>\s*PRODUCTS\s*<\/h1>/);
+  assert.match(serviceHtml, /<button[^>]*id="open-concept"[^>]*>\s*WORDSPHERE\s*<\/button>/);
+  assert.equal(/<h1>\s*WORDSPHERE\s*<\/h1>/.test(serviceHtml), false);
+  assert.equal(serviceHtml.includes("WORDWPHERE"), false);
   assert.equal(siteText.includes("WORDWPHERE"), false);
   assert.equal(
     serviceHtml.match(/<p id="concept"[^>]*>([\s\S]*?)<\/p>/)[1].trim(),
-    '言葉の定義の違いから"人間"を浮かび上がらせるサービスです。',
+    '多様な言葉の定義から"人間"を浮かび上がらせるサービスです。',
   );
+});
+
+test("製品モーダルは CONCEPT と指定の一文だけで、x と ESC で閉じる", () => {
+  assert.match(serviceHtml, /id="concept-modal"[^>]*hidden/);
+  assert.match(serviceHtml, /class="concept-close"[^>]*>\s*x\s*<\/button>/);
+  assert.match(serviceHtml, /id="concept-heading"[^>]*>\s*CONCEPT\s*</);
+  const copy = serviceHtml.match(/<div class="concept-copy">([\s\S]*?)<\/div>/)[1];
+  assert.equal(copy.replace(/<[^>]+>/g, "").replace(/\s+/g, ""), 'CONCEPT多様な言葉の定義から"人間"を浮かび上がらせるサービスです。');
+  assert.equal(serviceHtml.includes("screen-profile"), false);
+  assert.equal(/three/i.test(serviceHtml + modalJs), false);
+  const scripts = [...serviceHtml.matchAll(/<script[^>]*src="([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(scripts, ["../js/landing-sky.js", "../js/concept-modal.js"]);
+  assert.equal((modalJs.match(/addEventListener\(\s*"click"/g) || []).length, 2);
+  assert.match(modalJs, /openButton\.addEventListener\(\s*"click"/);
+  assert.match(modalJs, /closeButton\.addEventListener\(\s*"click"/);
+  assert.match(modalJs, /event\.key !== "Escape"/);
+  assert.match(modalJs, /modal-open/);
+  assert.match(modalJs, /position = "fixed"/);
+  assert.match(modalJs, /lockedScrollY/);
+  assert.match(modalJs, /prefers-reduced-motion/);
+  assert.match(siteCss, /@keyframes concept-rise\s*\{[^}]*scale\(0\.96\)/);
+  assert.match(siteCss, /@keyframes concept-veil-out/);
+  assert.match(siteCss, /@keyframes concept-spin/);
+  assert.match(siteCss, /@keyframes concept-revolve/);
+  assert.match(siteCss, /translateZ\(var\(--orbit-radius\)\)/);
+  assert.match(siteCss, /rotateY\(120deg\) translateZ\(var\(--orbit-radius\)\)/);
+  assert.match(siteCss, /rotateY\(240deg\) translateZ\(var\(--orbit-radius\)\)/);
+  assert.match(siteCss, /prefers-reduced-motion:\s*reduce/);
+  assert.match(
+    siteCss,
+    /html\.modal-open,\s*html\.modal-open body\s*\{[^}]*overflow:\s*hidden/,
+  );
+  assert.match(siteCss, /\.products-lead\s*\{[^}]*justify-content:\s*flex-start/);
+  assert.match(siteCss, /\.products-lead\s*\{[^}]*padding-top:\s*5\.5rem/);
 });
 
 test("会社概要は社名と設立日と代表者で、住所と資本金が無い", () => {
@@ -108,9 +148,11 @@ test("ロゴ画像ファイルと概念図ファイルが無い", () => {
   assert.deepEqual(srcs, [
     "../img/screen-root.png",
     "../img/screen-wordflow.png",
-    "../img/screen-profile.png",
     "../img/screen-search.png",
   ]);
+  assert.equal(serviceHtml.includes("screen-profile"), false);
+  assert.equal(indexHtml.includes("screen-profile"), false);
+  assert.equal(companyHtml.includes("screen-profile"), false);
 });
 
 test("トップのセクション2は PRODUCTS の下に WORDSPHERE と説明とリンク", () => {
@@ -218,7 +260,7 @@ test("縦スクロールはページ境界へ引き戻さない", () => {
   assert.deepEqual(ids, ["section-memesphere", "section-wordsphere", "section-future"]);
 });
 
-test("トップのタイトルはセクション中央で、他ページの上下分割は残す", () => {
+test("トップのタイトルはセクション中央で、カンパニーの上下分割は残す", () => {
   assert.equal(indexHtml.includes("section-upper"), false);
   assert.equal(indexHtml.includes("section-lower"), false);
   assert.match(indexHtml, /id="section-memesphere" class="home-story"/);
@@ -229,21 +271,24 @@ test("トップのタイトルはセクション中央で、他ページの上�
   assert.match(siteCss, /html\.home \.home-story\s*\{[^}]*justify-content:\s*center/);
   assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*max-width:\s*48rem/);
   assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*margin-inline:\s*auto/);
+  assert.equal(serviceHtml.includes("section-upper"), false);
+  assert.equal(serviceHtml.includes("section-lower"), false);
+  assert.match(serviceHtml, /class="products-lead"/);
   assert.match(companyHtml, /section-upper/);
-  assert.match(serviceHtml, /section-upper/);
   assert.match(siteCss, /\.section-upper\s*\{[^}]*50vh/);
 });
 
-test("全ページのヘッダーとフッターと本文の板が無く、画面写真の枠は残す", () => {
+test("全ページのヘッダーとフッターと本文の板が無く、画面写真のガラス枠も無い", () => {
   const plate = siteCss.match(/header,\s*footer,\s*\.text-area\s*\{[^}]*\}/);
   assert.ok(plate, "板を外す指定が無い");
   assert.match(plate[0], /background:\s*none/);
   assert.match(plate[0], /backdrop-filter:\s*none/);
   assert.match(plate[0], /-webkit-backdrop-filter:\s*none/);
   assert.match(plate[0], /border:\s*none/);
-  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*background:\s*var\(--glass\)/);
-  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*backdrop-filter:\s*blur\(12px\)/);
-  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*border:\s*1px solid var\(--glass-edge\)/);
+  assert.equal(/\.shot-grid/.test(siteCss), false);
+  assert.equal(serviceHtml.includes("shot-grid"), false);
+  assert.equal(serviceHtml.includes("gallery"), false);
+  assert.equal(/backdrop-filter:\s*blur/.test(siteCss), false);
   assert.equal(/border-bottom:\s*1px solid var\(--glass-edge\)/.test(siteCss), false);
   assert.equal(/border-top:\s*1px solid var\(--glass-edge\)/.test(siteCss), false);
   assert.equal(/\.text-area \{[^}]*border:\s*1px solid/.test(siteCss), false);
@@ -311,6 +356,15 @@ test("全ページのタイトルと本文は濃色の細字で、クリーム�
   assert.equal(/#000/.test(bodyCopy), false);
   assert.match(siteCss, /^body \{[^}]*color:\s*#04040a/m);
   assert.match(siteCss, /^body \{[^}]*font-weight:\s*200/m);
+  assert.match(siteCss, /\.products-lead h1\s*\{[^}]*color:\s*#04040a/);
+  assert.match(siteCss, /\.products-lead h1\s*\{[^}]*font-weight:\s*200/);
+  assert.match(siteCss, /\.products-lead h1\s*\{[^}]*font-size:\s*clamp\(2rem,\s*10vw,\s*6rem\)/);
+  assert.match(siteCss, /\.products-lead h1\s*\{[^}]*text-shadow:[^;]*#fbfbf5/);
+  const productsTitle = siteCss.match(/\.products-lead h1\s*\{[^}]*\}/)[0];
+  assert.equal(/#000/.test(productsTitle), false);
+  assert.match(siteCss, /\.product-name\s*\{[^}]*font-size:\s*0\.95rem/);
+  assert.match(siteCss, /\.product-name\s*\{[^}]*font-weight:\s*200/);
+  assert.match(siteCss, /\.product-name\s*\{[^}]*color:\s*#04040a/);
   assert.equal(siteCss.includes("@font-face"), false);
   assert.equal(indexHtml.includes("fonts.googleapis"), false);
   assert.equal(indexHtml.includes("@font-face"), false);

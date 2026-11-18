@@ -1,14 +1,19 @@
 <!--
-  サービス WORDSPHERE。公開パスは /products/。
-  名前と、指定の一文、画面写真 4 枚（/ /wordflow /profile /search）を残す。
-  概念図は置かない。背景は全ページ共通のクリームの星空。
+  製品ページ。公開パスは /products/。
+  先頭に PRODUCTS、その下に小さい WORDSPHERE。WORDSPHERE はボタン。
+  タップで全画面の概念モーダルを開く。閉じるのは画面左上の x と ESC だけ。
+  開いているあいだ背面はスクロールしない。
+  背景の平面は LP（screen-root）、wordflow、search の画面写真。
+  各平面は自転し、3枚の組は画面中央を重心に公転する。profile は使わない。
+  中央の文字は CONCEPT と指定の一文だけ。概念図は置かない。ギャラリーは置かない。
+  ページの地は全ページ共通のクリームの星空。
 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WORDSPHERE</title>
+  <title>PRODUCTS</title>
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
@@ -22,35 +27,9 @@
     </nav>
   </header>
   <main>
-    <section id="service-lead" class="band">
-      <div class="section-upper">
-        <h1>WORDSPHERE</h1>
-      </div>
-      <div class="section-lower">
-        <div class="text-area">
-          <p id="concept" class="subtitle">言葉の定義の違いから"人間"を浮かび上がらせるサービスです。</p>
-        </div>
-      </div>
-    </section>
-    <section id="overview" class="gallery">
-      <div class="shot-grid">
-        <figure>
-          <img src="../img/screen-root.png" width="1280" height="800" alt="Wordsphere の / 画面">
-          <figcaption>/</figcaption>
-        </figure>
-        <figure>
-          <img src="../img/screen-wordflow.png" width="1280" height="800" alt="Wordsphere の /wordflow 画面">
-          <figcaption>/wordflow</figcaption>
-        </figure>
-        <figure>
-          <img src="../img/screen-profile.png" width="1280" height="800" alt="Wordsphere の /profile 画面">
-          <figcaption>/profile</figcaption>
-        </figure>
-        <figure>
-          <img src="../img/screen-search.png" width="1280" height="800" alt="Wordsphere の /search 画面">
-          <figcaption>/search</figcaption>
-        </figure>
-      </div>
+    <section id="products-lead" class="products-lead">
+      <h1>PRODUCTS</h1>
+      <button type="button" class="product-name" id="open-concept" aria-haspopup="dialog" aria-controls="concept-modal">WORDSPHERE</button>
     </section>
   </main>
   <footer>
@@ -63,6 +42,36 @@
     </nav>
     <p class="copyright">©︎Memesphere G.K.</p>
   </footer>
+  <div id="concept-modal" class="concept-modal" hidden role="dialog" aria-modal="true" aria-labelledby="concept-heading">
+    <div class="concept-stage" aria-hidden="true">
+        <div class="concept-orbit">
+          <div class="concept-slot concept-slot-a">
+            <div class="concept-plane">
+              <img src="../img/screen-root.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+          <div class="concept-slot concept-slot-b">
+            <div class="concept-plane">
+              <img src="../img/screen-wordflow.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+          <div class="concept-slot concept-slot-c">
+            <div class="concept-plane">
+              <img src="../img/screen-search.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="concept-veil" aria-hidden="true"></div>
+    <div class="concept-foreground">
+      <button type="button" class="concept-close" aria-label="閉じる">x</button>
+      <div class="concept-copy">
+        <p id="concept-heading" class="concept-kicker">CONCEPT</p>
+        <p id="concept">多様な言葉の定義から"人間"を浮かび上がらせるサービスです。</p>
+      </div>
+    </div>
+  </div>
   <script src="../js/landing-sky.js"></script>
+  <script src="../js/concept-modal.js"></script>
 </body>
 </html>

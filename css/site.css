@@ -2,13 +2,14 @@
  * 合同会社ミームスフィアのサイト共通スタイル。
  * 全ページの背景はクリーム #fbfbf5。星空キャンバス（landing-sky.js）が背面。星と線は寒色。
  * ヘッダーとフッターと本文の半透明の板（背景、backdrop-filter、枠線）は置かない。
- * 画面写真の枠は残す。
+ * 画面写真のガラス枠は置かない。写真は製品モーダルの平面にだけ使う。
  * タイトルと本文は濃色 #04040a、font-weight 200。
  * タイトルとサブタイトルと本文は空の色 #fbfbf5 の柔らかい後光。黒い縁取りは無い。
  * ヘッダーとフッターの文字は同じ濃色で、タイトルと同じクリームの後光。黒い縁取りは無い。
  * トップ（html.home）のセクションは画面中央。タイトルの字間は 0.25em。
  * タイトルは字間 0.25em の末尾を戻し、グリフの中点をビューポート中央に置く。サブタイトルの字間は変えない。
- * カンパニーと製品のセクションは全画面。タイトルは上半分、本文は下半分。
+ * カンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
+ * 製品ページは先頭に大きい PRODUCTS、その下に小さい WORDSPHERE。
  * ロゴマークは置かない。新しいフォントは読まない。
  */
 
@@ -18,8 +19,6 @@
   --title: rgba(255, 255, 255, 0.9);
   --subtitle: rgba(255, 255, 255, 0.75);
   --outline: 0 1px 2px #000, 0 -1px 2px #000, 1px 0 2px #000, -1px 0 2px #000, 0 0 10px #000, 0 0 20px rgba(0, 0, 0, 0.7);
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-edge: color-mix(in srgb, #6673cc 35%, transparent);
 }
 
 * {
@@ -212,36 +211,6 @@ main section.band {
     0 0 28px #fbfbf5;
 }
 
-main section.gallery {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 4.5rem;
-  padding-bottom: 1.5rem;
-}
-
-.shot-grid {
-  width: min(100%, 72rem);
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.shot-grid figure {
-  margin: 0;
-  padding: 0.5rem;
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-edge);
-  text-align: center;
-}
-
-.shot-grid figcaption {
-  margin-top: 0.5rem;
-  text-align: center;
-}
-
 #overview dl {
   display: grid;
   justify-items: center;
@@ -283,12 +252,6 @@ img {
   max-width: 100%;
   height: auto;
   margin-inline: auto;
-}
-
-@media (max-width: 40rem) {
-  .shot-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 html.home .home-story {
@@ -348,4 +311,307 @@ footer,
 header a,
 footer a {
   color: #04040a;
+}
+
+.products-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 5.5rem;
+  text-align: center;
+}
+
+.products-lead h1 {
+  margin: 0;
+  color: #04040a;
+  font-size: clamp(2rem, 10vw, 6rem);
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
+}
+
+.product-name {
+  margin-top: 1.15rem;
+  padding: 0.2rem 0.15rem;
+  border: 0;
+  background: none;
+  color: #04040a;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 200;
+  letter-spacing: 0.16em;
+  line-height: 1.6;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  cursor: pointer;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
+}
+
+.product-name:focus-visible,
+.concept-close:focus-visible {
+  outline: 1px solid #04040a;
+  outline-offset: 0.35rem;
+}
+
+html.modal-open,
+html.modal-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.modal-open header,
+html.modal-open main,
+html.modal-open footer {
+  visibility: hidden;
+}
+
+.concept-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: transparent;
+}
+
+.concept-modal[hidden] {
+  display: none;
+}
+
+.concept-veil {
+  position: absolute;
+  inset: 0;
+  background: #fbfbf5;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.concept-modal.is-open .concept-veil {
+  animation: concept-veil-out 0.45s ease forwards;
+}
+
+.concept-modal.is-closing .concept-veil {
+  animation: concept-veil-in 0.32s ease forwards;
+}
+
+.concept-foreground {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform-origin: center center;
+}
+
+.concept-modal.is-open .concept-foreground {
+  opacity: 1;
+  animation: concept-rise 0.45s ease;
+}
+
+.concept-modal.is-closing .concept-foreground {
+  animation: concept-rise-out 0.32s ease both;
+}
+
+@keyframes concept-veil-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes concept-veil-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes concept-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes concept-rise-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.concept-stage {
+  --orbit-radius: 15rem;
+  --plane-w: 15rem;
+  --plane-h: 9.375rem;
+  position: absolute;
+  inset: 0;
+  perspective: 68rem;
+  perspective-origin: 50% 50%;
+  pointer-events: none;
+}
+
+.concept-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-14deg);
+}
+
+.concept-modal.is-settled .concept-orbit {
+  animation: concept-revolve 72s linear infinite;
+}
+
+@keyframes concept-revolve {
+  from { transform: rotateX(-14deg) rotateY(0deg); }
+  to { transform: rotateX(-14deg) rotateY(360deg); }
+}
+
+.concept-slot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.concept-slot-a { transform: rotateY(0deg) translateZ(var(--orbit-radius)); }
+.concept-slot-b { transform: rotateY(120deg) translateZ(var(--orbit-radius)); }
+.concept-slot-c { transform: rotateY(240deg) translateZ(var(--orbit-radius)); }
+
+.concept-plane {
+  position: absolute;
+  width: var(--plane-w);
+  height: var(--plane-h);
+  left: calc(var(--plane-w) / -2);
+  top: calc(var(--plane-h) / -2);
+  transform-style: preserve-3d;
+}
+
+.concept-modal.is-settled .concept-plane {
+  animation: concept-spin 36s linear infinite;
+}
+
+.concept-modal.is-settled .concept-slot-b .concept-plane {
+  animation-duration: 46s;
+}
+
+.concept-modal.is-settled .concept-slot-c .concept-plane {
+  animation-duration: 54s;
+}
+
+@keyframes concept-spin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(-360deg); }
+}
+
+.concept-plane img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  backface-visibility: visible;
+}
+
+.concept-close {
+  position: absolute;
+  z-index: 2;
+  top: 0.85rem;
+  left: 1rem;
+  margin: 0;
+  padding: 0.35rem 0.45rem;
+  border: 0;
+  background: none;
+  color: #04040a;
+  font-family: inherit;
+  font-size: 1.35rem;
+  font-weight: 200;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
+}
+
+.concept-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4.5rem 1.5rem;
+  pointer-events: none;
+  text-align: center;
+}
+
+.concept-kicker,
+.concept-copy p {
+  margin: 0;
+  color: #04040a;
+  font-weight: 200;
+  text-align: center;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
+}
+
+.concept-kicker {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: 0.22em;
+}
+
+.concept-copy p + p {
+  margin-top: 0.9rem;
+  max-width: 36rem;
+  font-size: clamp(1rem, 2.4vw, 1.125rem);
+  line-height: 1.7;
+}
+
+@media (max-width: 40rem) {
+  .concept-stage {
+    --orbit-radius: 8rem;
+    --plane-w: 9.5rem;
+    --plane-h: 5.9375rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-modal.is-open .concept-foreground,
+  .concept-modal.is-closing .concept-foreground,
+  .concept-modal.is-open .concept-veil,
+  .concept-modal.is-closing .concept-veil,
+  .concept-modal.is-settled .concept-orbit,
+  .concept-modal.is-settled .concept-plane {
+    animation: none;
+  }
+
+  .concept-modal.is-open .concept-foreground {
+    opacity: 1;
+    transform: none;
+  }
+
+  .concept-modal.is-open .concept-veil {
+    opacity: 0;
+  }
 }
