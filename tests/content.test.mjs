@@ -134,7 +134,7 @@ test("トップのセクション2は PRODUCTS の下に WORDSPHERE と説明と
 test("セクション3のサブタイトルは Issue の一文", () => {
   assert.equal(
     textOf(indexHtml, "section-future"),
-    "FUTURE WORKミーム（心の遺伝子）の理解を資本として社会にインパクトを与えていく",
+    "FUTUREミーム（心の遺伝子）の理解を資本として社会にインパクトを与えていく",
   );
 });
 
