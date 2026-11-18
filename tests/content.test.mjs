@@ -4,7 +4,7 @@
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
  * トップの色反転した LP 星空と中央配置、他ページの背景、
  * トップだけ板が無いこと、トップの文字が濃色の細字で、
- * 空の色の後光があることを見る。
+ * 空の色の後光があること、タイトルのグリフ中点が字間の分だけ戻ることを見る。
  */
 
 import assert from "node:assert/strict";
@@ -202,6 +202,8 @@ test("トップの文字は濃色の細字で、他ページの白抜きは残�
   assert.match(titleRule[0], /color:\s*#04040a/);
   assert.match(titleRule[0], /font-weight:\s*200/);
   assert.match(titleRule[0], /letter-spacing:\s*0\.25em/);
+  assert.match(titleRule[0], /translateX\(calc\(-50% \+ 0\.25em \/ 2\)\)/);
+  assert.equal(/padding-left/.test(titleRule[0]), false);
   assert.match(titleRule[0], /text-shadow:[^;]*#fbfbf5/);
   assert.equal(/text-shadow:\s*var\(--outline\)/.test(titleRule[0]), false);
   assert.equal(/#000/.test(titleRule[0]), false);
@@ -213,6 +215,8 @@ test("トップの文字は濃色の細字で、他ページの白抜きは残�
   assert.match(subtitleRule[0], /text-shadow:[^;]*#fbfbf5/);
   assert.equal(/text-shadow:\s*var\(--outline\)/.test(subtitleRule[0]), false);
   assert.equal(/#000/.test(subtitleRule[0]), false);
+  assert.equal(/letter-spacing/.test(subtitleRule[0]), false);
+  assert.equal(/translateX/.test(subtitleRule[0]), false);
   const chrome =
     /html\.home header,\s*html\.home footer,\s*html\.home header a,\s*html\.home footer a,\s*html\.home \.menu > summary\s*\{[^}]*\}/;
   const chromeRule = siteCss.match(chrome);
