@@ -1,6 +1,6 @@
 /**
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
- * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
+ * セクション1のサブタイトル、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
  * 全ページは LP の星系。背景のクリームは残し、星と線とラベルは寒色。
  * ヘッダーとフッターと本文の板が無いこと、文字が濃色の細字で、
@@ -32,8 +32,8 @@ const siteText = [
 
 const PHILOSOPHY = [
   '人と文化の根源にある"ミーム"の性質を探求することにより、人と社会により効果的に働きかけ、より良い人類の未来を作ること',
-  'リチャード・ドーキンスが「利己的な遺伝子」で提唱した概念"ミーム"は、遺伝子が生物を形作っているように、人の行動や文化を形作るとされています。そして遺伝子操作が生物のあり様を変える様に、"ミーム操作"は人や社会のあり様を変えることになるでしょう。',
-  '遺伝子工学に光と闇があるように、ミームの操作（ミーム工学）にも光と闇があります。Memesphereは、さまざまなサービスを通して「よいミーム操作」を広め、人類が自らをより深く理解し、その理解を持ってよりよく自らを変革していくことの一助となることを目標としています。',
+  '遺伝学者リチャード・ドーキンスがその著書「利己的な遺伝子」で提唱した概念"ミーム"は、遺伝子が生物を形作っているように、人の行動や文化を形作るものであるとされています。遺伝子操作が生物のあり様を変える様に、"ミーム操作"は人や社会のあり様を変えることになるでしょう。',
+  '遺伝子工学に光と闇があるように、ミームの操作（ミーム工学）にも光と闇があります。Memesphereは、最新のミーム研究の知見を取り入れたさまざまなサービスを通して「よいミーム操作」を広め、人類が自らをより深く理解し、よりよく自らを変革していくことの一助となることを目標としています。',
 ];
 
 const ALLOWED_IMAGES = new Set([
@@ -59,12 +59,11 @@ function walk(dir, out = []) {
   return out;
 }
 
-test("セクション1のサブタイトルが2つとも出る", () => {
+test("セクション1のサブタイトルは1行", () => {
   const text = textOf(indexHtml, "section-memesphere");
-  assert.equal(
-    text,
-    "MEMESPHERE人と人との繋がりを考える会社です。人と人々の振る舞いについて科学する会社です。",
-  );
+  assert.equal(text, "MEMESPHEREミーム工学で世界を変える。");
+  const section = indexHtml.match(/<section id="section-memesphere"[\s\S]*?<\/section>/)[0];
+  assert.equal(section.match(/<p class="subtitle">/g).length, 1);
 });
 
 test("サービス名は WORDSPHERE で WORDWPHERE が無い", () => {
@@ -77,13 +76,13 @@ test("サービス名は WORDSPHERE で WORDWPHERE が無い", () => {
   );
 });
 
-test("会社概要は社名と設立日だけで、住所・代表・資本金が無い", () => {
+test("会社概要は社名と設立日と代表者で、住所と資本金が無い", () => {
   assert.equal(
     textOf(companyHtml, "overview"),
-    "会社概要社名合同会社ミームスフィア（Memesphere G.K.）設立2020年5月1日",
+    "会社概要社名合同会社ミームスフィア（Memesphere G.K.）設立2020年5月1日代表者守本 憲市",
   );
+  assert.match(companyHtml, /<dt>設立<\/dt>\s*<dd>2020年5月1日<\/dd>\s*<dt>代表者<\/dt>\s*<dd>守本 憲市<\/dd>/);
   assert.equal(companyHtml.includes("住所"), false);
-  assert.equal(companyHtml.includes("代表"), false);
   assert.equal(companyHtml.includes("資本金"), false);
 });
 
@@ -114,14 +113,29 @@ test("ロゴ画像ファイルと概念図ファイルが無い", () => {
   ]);
 });
 
-test("トップの Wordsphereのページへ は /products/ へ進み、本体ホストへは飛ばない", () => {
+test("トップのセクション2は PRODUCTS の下に WORDSPHERE と説明とリンク", () => {
   const section = indexHtml.match(/<section id="section-wordsphere"[^>]*>([\s\S]*?)<\/section>/)[1];
+  assert.match(section, /<h2>\s*PRODUCTS\s*<\/h2>/);
+  assert.equal(/<h2>\s*WORDSPHERE\s*<\/h2>/.test(section), false);
+  assert.match(section, /<p class="subtitle">WORDSPHERE<\/p>/);
+  assert.match(
+    section,
+    /<p class="subtitle">言葉の定義の違いから"人間"を浮かび上がらせるサービス<\/p>/,
+  );
+  assert.equal(section.includes("浮かび上がらせるサービスです"), false);
   assert.match(section, /<a href="\/products\/">Wordsphereのページへ<\/a>/);
   assert.equal(section.includes("/wordsphere/"), false);
   assert.equal(section.includes("wordsphere-beta.vercel.app"), false);
   assert.equal(siteText.includes("wordsphere-beta.vercel.app"), false);
   assert.equal(siteText.includes("wordsphere.net"), false);
   assert.equal(siteText.includes("wordsphere.com"), false);
+});
+
+test("セクション3のサブタイトルは Issue の一文", () => {
+  assert.equal(
+    textOf(indexHtml, "section-future"),
+    "FUTURE WORKミーム（心の遺伝子）の理解を資本として社会にインパクトを与えていく",
+  );
 });
 
 test("ヘッダーは社名の右に TOP、PRODUCTS、COMPANY で、メニューは無い", () => {
@@ -150,13 +164,17 @@ test("フッターの製品導線は PRODUCTS で /products/ へ進む", () => {
   }
 });
 
-test("コピーライトはフッターの一番下に社名だけで、年が無い", () => {
-  const mark = '<p class="copyright">© 合同会社ミームスフィア</p>';
+test("コピーライトはフッターの一番下に Issue の表記で、年が無い", () => {
+  const lineText = "\u00A9\uFE0EMemesphere G.K.";
+  const mark = `<p class="copyright">${lineText}</p>`;
   for (const html of [indexHtml, serviceHtml, companyHtml]) {
     assert.match(html, new RegExp(`${mark}\\s*</footer>`));
     const line = html.match(/<p class="copyright">([^<]*)<\/p>/)[1];
-    assert.equal(line, "© 合同会社ミームスフィア");
+    assert.equal(line, lineText);
+    assert.equal(line.codePointAt(0), 0x00a9);
+    assert.equal(line.charCodeAt(1), 0xfe0e);
     assert.equal(/\d{4}/.test(line), false);
+    assert.equal(line.includes("合同会社"), false);
   }
 });
 
