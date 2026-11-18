@@ -3,7 +3,7 @@
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
  * トップの色反転した LP 星空と中央配置、他ページの背景、
- * トップだけ板が無いことを見る。
+ * トップだけ板が無いこと、トップの文字が濃色の細字であることを見る。
  */
 
 import assert from "node:assert/strict";
@@ -191,4 +191,40 @@ test("トップのヘッダーとフッターと本文の板が無く、他ペ�
   assert.match(siteCss, /^header \{[^}]*border-bottom:\s*1px solid var\(--glass-edge\)/m);
   assert.match(siteCss, /^footer \{[^}]*border-top:\s*1px solid var\(--glass-edge\)/m);
   assert.match(siteCss, /^\.text-area \{[^}]*border:\s*1px solid var\(--glass-edge\)/m);
+});
+
+test("トップの文字は濃色の細字で、他ページの白抜きは残す", () => {
+  const title =
+    /html\.home \.home-copy h1,\s*html\.home \.home-copy h2\s*\{[^}]*\}/;
+  const titleRule = siteCss.match(title);
+  assert.ok(titleRule, "トップのタイトル指定が無い");
+  assert.match(titleRule[0], /color:\s*#04040a/);
+  assert.match(titleRule[0], /font-weight:\s*200/);
+  assert.match(titleRule[0], /letter-spacing:\s*0\.25em/);
+  assert.match(titleRule[0], /text-shadow:\s*none/);
+  assert.equal(/text-shadow:\s*var\(--outline\)/.test(titleRule[0]), false);
+  const subtitle = /html\.home \.subtitle,\s*html\.home \.subtitle a\s*\{[^}]*\}/;
+  const subtitleRule = siteCss.match(subtitle);
+  assert.ok(subtitleRule, "トップのサブタイトル指定が無い");
+  assert.match(subtitleRule[0], /color:\s*#04040a/);
+  assert.match(subtitleRule[0], /font-weight:\s*200/);
+  assert.match(subtitleRule[0], /text-shadow:\s*none/);
+  const chrome =
+    /html\.home header,\s*html\.home footer,\s*html\.home header a,\s*html\.home footer a,\s*html\.home \.menu > summary\s*\{[^}]*\}/;
+  const chromeRule = siteCss.match(chrome);
+  assert.ok(chromeRule, "トップのヘッダーとフッターの文字色が無い");
+  assert.match(chromeRule[0], /color:\s*#04040a/);
+  assert.match(
+    siteCss,
+    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*color:\s*var\(--title\)/,
+  );
+  assert.match(
+    siteCss,
+    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*text-shadow:\s*var\(--outline\)/,
+  );
+  assert.match(siteCss, /\.subtitle\s*\{[^}]*color:\s*var\(--subtitle\)/);
+  assert.match(siteCss, /\.subtitle\s*\{[^}]*text-shadow:\s*var\(--outline\)/);
+  assert.equal(siteCss.includes("@font-face"), false);
+  assert.equal(indexHtml.includes("fonts.googleapis"), false);
+  assert.equal(indexHtml.includes("@font-face"), false);
 });

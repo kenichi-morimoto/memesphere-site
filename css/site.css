@@ -4,7 +4,9 @@
  * トップ（html.home）の背景は LP 星空の色反転。セクションは画面中央。
  * サービスとカンパニーのヘッダーとフッターとテキストエリアは半透明（blur 12px、白の透過、境界線）。
  * トップではその板（背景、backdrop-filter、枠線）を外し、星空を端まで見せる。
- * セクションタイトルとサブタイトルの縁取りは LP 先頭の text-shadow。
+ * サービスとカンパニーのセクションタイトルとサブタイトルの縁取りは LP 先頭の text-shadow。
+ * トップのタイトルとサブタイトルは濃色 #04040a、font-weight 200、タイトルの字間は 0.25em。縁取りは無い。
+ * トップのヘッダーとフッターの文字も同じ濃色。新しいフォントは読まない。
  * サービスとカンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
  * ロゴマークは置かない。
  */
@@ -320,12 +322,27 @@ html.home .home-copy {
 html.home .home-copy h1,
 html.home .home-copy h2 {
   margin: 0 0 1.5rem;
-  color: var(--title);
+  color: #04040a;
   font-size: clamp(2rem, 10vw, 6rem);
   font-weight: 200;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.25em;
   text-align: center;
-  text-shadow: var(--outline);
+  text-shadow: none;
+}
+
+html.home .subtitle,
+html.home .subtitle a {
+  color: #04040a;
+  font-weight: 200;
+  text-shadow: none;
+}
+
+html.home header,
+html.home footer,
+html.home header a,
+html.home footer a,
+html.home .menu > summary {
+  color: #04040a;
 }
 
 html.home header,
