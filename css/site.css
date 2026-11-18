@@ -5,7 +5,8 @@
  * サービスとカンパニーのヘッダーとフッターとテキストエリアは半透明（blur 12px、白の透過、境界線）。
  * トップではその板（背景、backdrop-filter、枠線）を外し、星空を端まで見せる。
  * サービスとカンパニーのセクションタイトルとサブタイトルの縁取りは LP 先頭の text-shadow。
- * トップのタイトルとサブタイトルは濃色 #04040a、font-weight 200、タイトルの字間は 0.25em。縁取りは無い。
+ * トップのタイトルとサブタイトルは濃色 #04040a、font-weight 200、タイトルの字間は 0.25em。
+ * 星と重なるときは空の色 #fbfbf5 の柔らかい後光。黒い縁取りは無い。
  * トップのヘッダーとフッターの文字も同じ濃色。新しいフォントは読まない。
  * サービスとカンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
  * ロゴマークは置かない。
@@ -327,14 +328,22 @@ html.home .home-copy h2 {
   font-weight: 200;
   letter-spacing: 0.25em;
   text-align: center;
-  text-shadow: none;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
 html.home .subtitle,
 html.home .subtitle a {
   color: #04040a;
   font-weight: 200;
-  text-shadow: none;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
 html.home header,
