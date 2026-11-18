@@ -121,7 +121,8 @@ test("会社概要は社名と設立日と代表者で、住所と資本金が�
     textOf(companyHtml, "overview"),
     "会社概要社名合同会社ミームスフィア（Memesphere G.K.）設立2020年5月1日代表者守本 憲市",
   );
-  assert.match(companyHtml, /<dt>設立<\/dt>\s*<dd>2020年5月1日<\/dd>\s*<dt>代表者<\/dt>\s*<dd>守本 憲市<\/dd>/);
+  assert.match(companyHtml, /<dt>設立<\/dt>\s*<dd>2020年5月1日<\/dd>/);
+  assert.match(companyHtml, /<dt>代表者<\/dt>\s*<dd>守本 憲市<\/dd>/);
   assert.equal(companyHtml.includes("住所"), false);
   assert.equal(companyHtml.includes("資本金"), false);
 });
@@ -260,7 +261,7 @@ test("縦スクロールはページ境界へ引き戻さない", () => {
   assert.deepEqual(ids, ["section-memesphere", "section-wordsphere", "section-future"]);
 });
 
-test("トップのタイトルはセクション中央で、カンパニーの上下分割は残す", () => {
+test("トップのタイトルはセクション中央", () => {
   assert.equal(indexHtml.includes("section-upper"), false);
   assert.equal(indexHtml.includes("section-lower"), false);
   assert.match(indexHtml, /id="section-memesphere" class="home-story"/);
@@ -272,10 +273,42 @@ test("トップのタイトルはセクション中央で、カンパニーの�
   assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*max-width:\s*48rem/);
   assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*margin-inline:\s*auto/);
   assert.equal(serviceHtml.includes("section-upper"), false);
-  assert.equal(serviceHtml.includes("section-lower"), false);
-  assert.match(serviceHtml, /class="products-lead"/);
-  assert.match(companyHtml, /section-upper/);
-  assert.match(siteCss, /\.section-upper\s*\{[^}]*50vh/);
+  assert.equal(companyHtml.includes("section-upper"), false);
+  assert.equal(/\.section-upper/.test(siteCss), false);
+});
+
+test("カンパニーは中央の狭い列に概要と理念をまとめる", () => {
+  assert.equal(companyHtml.includes("section-upper"), false);
+  assert.equal(companyHtml.includes("section-lower"), false);
+  assert.equal(companyHtml.includes("band"), false);
+  const philosophySection = companyHtml.match(/<section id="philosophy"[\s\S]*?<\/section>/)[0];
+  assert.equal(/<ul\b/.test(philosophySection), false);
+  assert.equal(/<li\b/.test(philosophySection), false);
+  assert.equal((philosophySection.match(/<p>/g) || []).length, 3);
+  assert.match(companyHtml, /class="company-sheet"/);
+  assert.match(companyHtml, /class="company-column"/);
+  assert.match(companyHtml, /<h1 class="sheet-label">会社概要<\/h1>/);
+  assert.match(companyHtml, /<h2 class="sheet-label">企業理念<\/h2>/);
+  assert.match(siteCss, /\.company-column\s*\{[^}]*width:\s*min\(100%,\s*40rem\)/);
+  assert.match(siteCss, /\.company-column\s*\{[^}]*margin-inline:\s*auto/);
+  assert.match(siteCss, /\.company-column\s*\{[^}]*padding:\s*7\.5rem/);
+  assert.match(siteCss, /\.company-column\s*\{[^}]*text-align:\s*left/);
+  assert.equal(/\.company-column\s*\{[^}]*background/.test(siteCss), false);
+  assert.match(siteCss, /\.company-sheet section\s*\{[^}]*min-height:\s*0/);
+  assert.match(siteCss, /\.sheet-label\s*\{[^}]*font-size:\s*0\.72rem/);
+  assert.match(siteCss, /\.sheet-label\s*\{[^}]*text-align:\s*left/);
+  assert.match(siteCss, /#overview dl\s*\{[^}]*flex-direction:\s*column/);
+  assert.match(
+    siteCss,
+    /@media \(min-width: 48rem\)\s*\{[\s\S]*?#overview dl\s*\{[^}]*flex-direction:\s*row/,
+  );
+  assert.match(siteCss, /border-left:\s*1px solid rgba\(4,\s*4,\s*10,\s*0\.28\)/);
+  assert.match(siteCss, /#overview dt,\s*#overview dd\s*\{[^}]*font-size:\s*1rem/);
+  assert.match(siteCss, /#overview dt,\s*#overview dd\s*\{[^}]*text-align:\s*left/);
+  assert.equal(/#overview dt,\s*#overview dd\s*\{[^}]*clamp\(/.test(siteCss), false);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*line-height:\s*1\.95/);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*text-align:\s*left/);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*font-size:\s*1rem/);
 });
 
 test("全ページのヘッダーとフッターと本文の板が無く、画面写真のガラス枠も無い", () => {
@@ -328,21 +361,17 @@ test("全ページのタイトルと本文は濃色の細字で、クリーム�
   assert.match(halo[1], /#fbfbf5/);
   assert.equal(/#000/.test(halo[1]), false);
   assert.equal(/var\(--outline\)/.test(halo[1]), false);
-  assert.match(
-    siteCss,
-    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*color:\s*#04040a/,
-  );
-  assert.match(
-    siteCss,
-    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*font-weight:\s*200/,
-  );
-  assert.match(
-    siteCss,
-    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*text-shadow:[^;]*#fbfbf5/,
-  );
-  const sectionTitle = siteCss.match(/\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*\}/)[0];
-  assert.equal(/text-shadow:\s*var\(--outline\)/.test(sectionTitle), false);
-  assert.equal(/#000/.test(sectionTitle), false);
+  assert.match(siteCss, /\.sheet-label\s*\{[^}]*color:\s*#04040a/);
+  assert.match(siteCss, /\.sheet-label\s*\{[^}]*font-weight:\s*200/);
+  assert.match(siteCss, /\.sheet-label\s*\{[^}]*text-shadow:[^;]*#fbfbf5/);
+  const sheetLabel = siteCss.match(/\.sheet-label\s*\{[^}]*\}/)[0];
+  assert.equal(/text-shadow:\s*var\(--outline\)/.test(sheetLabel), false);
+  assert.equal(/#000/.test(sheetLabel), false);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*color:\s*#04040a/);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*font-weight:\s*200/);
+  assert.match(siteCss, /#philosophy p\s*\{[^}]*text-shadow:[^;]*#fbfbf5/);
+  const philosophy = siteCss.match(/#philosophy p\s*\{[^}]*\}/)[0];
+  assert.equal(/#000/.test(philosophy), false);
   assert.match(siteCss, /\.subtitle\s*\{[^}]*color:\s*#04040a/);
   assert.match(siteCss, /\.subtitle\s*\{[^}]*font-weight:\s*200/);
   assert.match(siteCss, /\.subtitle\s*\{[^}]*text-shadow:[^;]*#fbfbf5/);

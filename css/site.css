@@ -8,7 +8,7 @@
  * ヘッダーとフッターの文字は同じ濃色で、タイトルと同じクリームの後光。黒い縁取りは無い。
  * トップ（html.home）のセクションは画面中央。タイトルの字間は 0.25em。
  * タイトルは字間 0.25em の末尾を戻し、グリフの中点をビューポート中央に置く。サブタイトルの字間は変えない。
- * カンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
+ * カンパニーはページ中央の狭い列。概要と理念を一枚にまとめ、板は置かない。
  * 製品ページは先頭に大きい PRODUCTS、その下に小さい WORDSPHERE。
  * ロゴマークは置かない。新しいフォントは読まない。
  */
@@ -130,47 +130,6 @@ main section {
   padding-inline: 1.5rem;
 }
 
-main section.band {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.section-upper,
-.section-lower {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  text-align: center;
-}
-
-.section-upper {
-  flex: 0 0 50vh;
-  padding-top: 3.5rem;
-}
-
-.section-lower {
-  flex: 1 0 auto;
-  min-height: 50vh;
-}
-
-.section-upper h1,
-.section-upper h2 {
-  margin: 0;
-  color: #04040a;
-  font-size: clamp(2rem, 10vw, 6rem);
-  font-weight: 200;
-  letter-spacing: 0.1em;
-  text-align: center;
-  text-shadow:
-    0 0 4px #fbfbf5,
-    0 0 8px #fbfbf5,
-    0 0 16px #fbfbf5,
-    0 0 28px #fbfbf5;
-}
-
 .subtitle {
   margin: 0.75rem 0 0;
   color: #04040a;
@@ -211,40 +170,107 @@ main section.band {
     0 0 28px #fbfbf5;
 }
 
+.company-sheet section {
+  min-height: 0;
+  padding-inline: 0;
+}
+
+.company-column {
+  width: min(100%, 40rem);
+  margin-inline: auto;
+  padding: 7.5rem 1.5rem 3.5rem;
+  text-align: left;
+}
+
+.company-sheet section + section {
+  margin-top: 2.75rem;
+}
+
+.sheet-label {
+  margin: 0 0 0.85rem;
+  color: #04040a;
+  font-size: 0.72rem;
+  font-weight: 200;
+  letter-spacing: 0.18em;
+  text-align: left;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
+}
+
 #overview dl {
-  display: grid;
-  justify-items: center;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
   margin: 0;
+}
+
+#overview dl > div {
+  padding: 0.85rem 0;
+  border-top: 1px solid rgba(4, 4, 10, 0.28);
+}
+
+#overview dl > div:first-child {
+  padding-top: 0;
+  border-top: none;
 }
 
 #overview dt,
 #overview dd {
   margin: 0;
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  text-align: center;
+  color: #04040a;
+  font-size: 1rem;
+  font-weight: 200;
+  line-height: 1.6;
+  text-align: left;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
-#philosophy .text-area {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+#overview dt {
+  margin-bottom: 0.2rem;
 }
 
-#philosophy p,
-#philosophy li {
-  margin: 0;
-  line-height: 1.8;
-  text-align: center;
+#philosophy p {
+  margin: 0 0 1.35rem;
+  color: #04040a;
+  font-size: 1rem;
+  font-weight: 200;
+  line-height: 1.95;
+  text-align: left;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
-#philosophy ul {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+#philosophy p:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 48rem) {
+  #overview dl {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  #overview dl > div {
+    flex: 1 1 0;
+    padding: 0 1.1rem;
+    border-top: none;
+    border-left: 1px solid rgba(4, 4, 10, 0.28);
+  }
+
+  #overview dl > div:first-child {
+    flex: 1.4 1 0;
+    padding-left: 0;
+    border-left: none;
+  }
 }
 
 img {
