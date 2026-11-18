@@ -1,7 +1,8 @@
 /**
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
- * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライトを見る。
+ * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
+ * トップの色反転した LP 星空と中央配置、他ページの背景を見る。
  */
 
 import assert from "node:assert/strict";
@@ -15,7 +16,15 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const indexHtml = readFileSync(join(root, "index.html"), "utf8");
 const serviceHtml = readFileSync(join(root, "wordsphere/index.html"), "utf8");
 const companyHtml = readFileSync(join(root, "company/index.html"), "utf8");
-const siteText = [indexHtml, serviceHtml, companyHtml, readFileSync(join(root, "css/site.css"), "utf8"), readFileSync(join(root, "js/starfield.js"), "utf8")].join("\n");
+const siteCss = readFileSync(join(root, "css/site.css"), "utf8");
+const siteText = [
+  indexHtml,
+  serviceHtml,
+  companyHtml,
+  siteCss,
+  readFileSync(join(root, "js/starfield.js"), "utf8"),
+  readFileSync(join(root, "js/landing-sky.js"), "utf8"),
+].join("\n");
 
 const PHILOSOPHY = [
   '人と文化の根源にある"ミーム"の性質を探求することにより、人と社会により効果的に働きかけ、より良い人類の未来を作ること',
@@ -120,13 +129,43 @@ test("コピーライトはフッターの一番下に社名だけで、年が�
   }
 });
 
-test("星空は全ページ共通で、定義の星を置かない", () => {
-  const sky = readFileSync(join(root, "js/starfield.js"), "utf8");
-  for (const html of [indexHtml, serviceHtml, companyHtml]) {
+test("トップの星空は LP の星系を色反転し、他ページの背景は変えない", () => {
+  const landing = readFileSync(join(root, "js/landing-sky.js"), "utf8");
+  const serviceSky = readFileSync(join(root, "js/starfield.js"), "utf8");
+  assert.match(indexHtml, /js\/landing-sky\.js/);
+  assert.equal(indexHtml.includes("starfield.js"), false);
+  assert.match(indexHtml, /<html lang="ja" class="home">/);
+  for (const html of [serviceHtml, companyHtml]) {
     assert.match(html, /<canvas id="starfield"/);
     assert.match(html, /starfield\.js/);
+    assert.equal(html.includes("landing-sky.js"), false);
   }
-  assert.match(sky, /WORD_COUNT/);
-  assert.match(sky, /USER_COUNT/);
-  assert.equal(/definition/i.test(sky), false);
+  assert.match(landing, /type: "Definition"/);
+  assert.match(landing, /自由/);
+  assert.match(landing, /TARGET_DEFS = 100/);
+  assert.match(landing, /TARGET_WORDS = 70/);
+  assert.match(landing, /TARGET_USERS = 25/);
+  assert.match(landing, /LANDING_ORBIT_RADIUS = 22/);
+  assert.match(landing, /BG_STAR_COUNT = 2500/);
+  assert.match(landing, /#04040a/);
+  assert.match(landing, /function invertAdditive/);
+  assert.match(serviceSky, /WORD_COUNT/);
+  assert.match(serviceSky, /USER_COUNT/);
+  assert.equal(/definition/i.test(serviceSky), false);
+});
+
+test("トップのタイトルはセクション中央で、他ページの上下分割は残す", () => {
+  assert.equal(indexHtml.includes("section-upper"), false);
+  assert.equal(indexHtml.includes("section-lower"), false);
+  assert.match(indexHtml, /id="section-memesphere" class="home-story"/);
+  assert.match(indexHtml, /id="section-wordsphere" class="home-story"/);
+  assert.match(indexHtml, /id="section-future" class="home-story"/);
+  assert.match(siteCss, /html\.home #section-memesphere\s*\{[^}]*height:\s*100vh/);
+  assert.match(siteCss, /html\.home \.home-story\s*\{[^}]*align-items:\s*center/);
+  assert.match(siteCss, /html\.home \.home-story\s*\{[^}]*justify-content:\s*center/);
+  assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*max-width:\s*48rem/);
+  assert.match(siteCss, /html\.home \.home-copy\s*\{[^}]*margin-inline:\s*auto/);
+  assert.match(companyHtml, /section-upper/);
+  assert.match(serviceHtml, /section-upper/);
+  assert.match(siteCss, /\.section-upper\s*\{[^}]*50vh/);
 });

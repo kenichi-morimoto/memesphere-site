@@ -1,11 +1,11 @@
 /*
  * 合同会社ミームスフィアのサイト共通スタイル。
- * 背景はごく薄い青（--sky）。星空キャンバス #starfield が全ページの背面。
- * ヘッダーとフッターとテキストエリアは Wordsphere ナビと同様の半透明
- * （backdrop-blur-md = 12px、白の透過、境界線）。
- * セクションタイトルとサブタイトルの縁取りは Wordsphere LP 先頭の text-shadow。
- * 各セクションは全画面。タイトルは上半分、サブタイトルやリンクは下半分。中央寄せ。
- * 暗い宇宙色は使わない。ロゴマークは置かない。
+ * サービスとカンパニーの背景はごく薄い青（--sky）。星空キャンバスが背面。
+ * トップ（html.home）の背景は LP 星空の色反転。セクションは画面中央。
+ * ヘッダーとフッターとテキストエリアは半透明（blur 12px、白の透過、境界線）。
+ * セクションタイトルとサブタイトルの縁取りは LP 先頭の text-shadow。
+ * サービスとカンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
+ * ロゴマークは置かない。
  */
 
 :root {
@@ -288,4 +288,41 @@ img {
   .shot-grid {
     grid-template-columns: 1fr;
   }
+}
+
+html.home,
+html.home body {
+  background: #fbfbf5;
+}
+
+html.home .home-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+html.home #section-memesphere {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+html.home .home-copy {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+html.home .home-copy h1,
+html.home .home-copy h2 {
+  margin: 0 0 1.5rem;
+  color: var(--title);
+  font-size: clamp(2rem, 10vw, 6rem);
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-shadow: var(--outline);
 }

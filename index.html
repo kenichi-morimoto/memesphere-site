@@ -1,12 +1,12 @@
 <!--
   合同会社ミームスフィアのトップ。
-  セクションは MEMESPHERE / WORDSPHERE / FUTURE WORK。各セクションは全画面。
-  上半分がタイトル、下半分がサブタイトルとリンク。
+  セクションは MEMESPHERE / WORDSPHERE / FUTURE WORK。
+  最初の画面はセクション1だけ。各セクションのタイトルは中央。
   WORDSPHERE はサービスページ /wordsphere/ へ進む。
-  背景は全ページ共通の青空の星空（定義の星は置かない）。
+  背景はこのページだけ。LP の先頭星空を色反転したもの。
 -->
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="home">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,33 +36,27 @@
     </nav>
   </header>
   <main>
-    <section id="section-memesphere" class="band">
-      <div class="section-upper">
+    <section id="section-memesphere" class="home-story">
+      <div class="home-copy">
         <h1>MEMESPHERE</h1>
-      </div>
-      <div class="section-lower">
         <div class="text-area">
           <p class="subtitle">人と人との繋がりを考える会社です。</p>
           <p class="subtitle">人と人々の振る舞いについて科学する会社です。</p>
         </div>
       </div>
     </section>
-    <section id="section-wordsphere" class="band">
-      <div class="section-upper">
+    <section id="section-wordsphere" class="home-story">
+      <div class="home-copy">
         <h2>WORDSPHERE</h2>
-      </div>
-      <div class="section-lower">
         <div class="text-area">
           <p class="subtitle">言葉の定義の違いから"人間"を浮かび上がらせるサービスです。</p>
           <p class="subtitle"><a href="/wordsphere/">Wordsphereのページへ</a></p>
         </div>
       </div>
     </section>
-    <section id="section-future" class="band">
-      <div class="section-upper">
+    <section id="section-future" class="home-story">
+      <div class="home-copy">
         <h2>FUTURE WORK</h2>
-      </div>
-      <div class="section-lower">
         <div class="text-area">
           <p class="subtitle">人の作動原理を源泉として、社会にインパクトを与えていきます。</p>
         </div>
@@ -79,6 +73,6 @@
     </nav>
     <p class="copyright">© 合同会社ミームスフィア</p>
   </footer>
-  <script src="js/starfield.js"></script>
+  <script src="js/landing-sky.js"></script>
 </body>
 </html>
