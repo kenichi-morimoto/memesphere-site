@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 
 const indexHtml = readFileSync(join(root, "index.html"), "utf8");
-const serviceHtml = readFileSync(join(root, "wordsphere/index.html"), "utf8");
+const serviceHtml = readFileSync(join(root, "products/index.html"), "utf8");
 const companyHtml = readFileSync(join(root, "company/index.html"), "utf8");
 const siteCss = readFileSync(join(root, "css/site.css"), "utf8");
 const siteText = [
@@ -114,13 +114,40 @@ test("ロゴ画像ファイルと概念図ファイルが無い", () => {
   ]);
 });
 
-test("トップの WORDSPHERE はサービスページへ進み、本体ホストへは飛ばない", () => {
+test("トップの Wordsphereのページへ は /products/ へ進み、本体ホストへは飛ばない", () => {
   const section = indexHtml.match(/<section id="section-wordsphere"[^>]*>([\s\S]*?)<\/section>/)[1];
-  assert.match(section, /<a href="\/wordsphere\/">Wordsphereのページへ<\/a>/);
+  assert.match(section, /<a href="\/products\/">Wordsphereのページへ<\/a>/);
+  assert.equal(section.includes("/wordsphere/"), false);
   assert.equal(section.includes("wordsphere-beta.vercel.app"), false);
   assert.equal(siteText.includes("wordsphere-beta.vercel.app"), false);
   assert.equal(siteText.includes("wordsphere.net"), false);
   assert.equal(siteText.includes("wordsphere.com"), false);
+});
+
+test("ヘッダーは社名の右に TOP、PRODUCTS、COMPANY で、メニューは無い", () => {
+  for (const html of [indexHtml, serviceHtml, companyHtml]) {
+    assert.equal(/<details\b/i.test(html), false);
+    assert.equal(html.includes("メニュー"), false);
+    assert.equal(html.includes("SERVICE"), false);
+    const header = html.match(/<header>([\s\S]*?)<\/header>/)[1];
+    assert.match(header, /class="brand">合同会社ミームスフィア</);
+    const links = [...header.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(
+      (match) => `${match[2]} ${match[1]}`,
+    );
+    assert.deepEqual(links, ["TOP /", "PRODUCTS /products/", "COMPANY /company/"]);
+  }
+  assert.equal(/\.menu\b/.test(siteCss), false);
+});
+
+test("フッターの製品導線は PRODUCTS で /products/ へ進む", () => {
+  for (const html of [indexHtml, serviceHtml, companyHtml]) {
+    const footer = html.match(/<footer>([\s\S]*?)<\/footer>/)[1];
+    const links = [...footer.matchAll(/<a href="([^"]+)">([^<]+)<\/a>/g)].map(
+      (match) => `${match[2]} ${match[1]}`,
+    );
+    assert.deepEqual(links, ["TOP /", "PRODUCTS /products/", "COMPANY /company/"]);
+    assert.equal(footer.includes("/wordsphere/"), false);
+  }
 });
 
 test("コピーライトはフッターの一番下に社名だけで、年が無い", () => {
@@ -228,7 +255,7 @@ test("全ページのタイトルと本文は濃色の細字で、クリーム�
   assert.equal(/letter-spacing/.test(subtitleRule[0]), false);
   assert.equal(/translateX/.test(subtitleRule[0]), false);
   const chrome =
-    /header,\s*footer,\s*header a,\s*footer a,\s*\.menu > summary\s*\{[^}]*\}/;
+    /header,\s*footer,\s*header a,\s*footer a\s*\{[^}]*\}/;
   const chromeRule = siteCss.match(chrome);
   assert.ok(chromeRule, "ヘッダーとフッターの文字色が無い");
   assert.match(chromeRule[0], /color:\s*#04040a/);

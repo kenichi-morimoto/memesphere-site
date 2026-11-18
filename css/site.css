@@ -91,8 +91,7 @@ footer {
 }
 
 .brand,
-.header-links a,
-.menu > summary {
+.header-links a {
   white-space: nowrap;
 }
 
@@ -104,8 +103,7 @@ footer {
 }
 
 header a,
-footer a,
-.menu > summary {
+footer a {
   color: #04040a;
   text-decoration: none;
 }
@@ -114,30 +112,6 @@ nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-nav ul ul {
-  padding-left: 1rem;
-}
-
-.menu {
-  position: relative;
-}
-
-.menu > summary {
-  cursor: pointer;
-}
-
-.menu > ul {
-  position: absolute;
-  right: 0;
-  z-index: 3;
-  padding: 0.5rem 1rem;
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-edge);
-  text-align: left;
 }
 
 footer nav ul {
@@ -372,7 +346,6 @@ html.home .subtitle a {
 header,
 footer,
 header a,
-footer a,
-.menu > summary {
+footer a {
   color: #04040a;
 }
