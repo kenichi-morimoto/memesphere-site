@@ -2,8 +2,8 @@
  * Issue #491 の受け入れを HTML とファイル一覧で固定する。
  * セクション1のサブタイトル2つ、サービス名、会社概要、企業理念、
  * ロゴ画像と概念図が無いこと、トップのリンク先、コピーライト、
- * トップは LP の星系。背景のクリームは残し、星と線とラベルは寒色。他ページの背景、
- * トップだけ板が無いこと、トップの文字が濃色の細字で、
+ * 全ページは LP の星系。背景のクリームは残し、星と線とラベルは寒色。
+ * ヘッダーとフッターと本文の板が無いこと、文字が濃色の細字で、
  * 空の色の後光があること、タイトルのグリフ中点が字間の分だけ戻ることを見る。
  */
 
@@ -131,17 +131,18 @@ test("コピーライトはフッターの一番下に社名だけで、年が�
   }
 });
 
-test("トップの星空は LP の星系のまま、星と線とラベルは寒色で、他ページは変えない", () => {
+test("全ページの星空は LP の星系のまま、星と線とラベルは寒色", () => {
   const landing = readFileSync(join(root, "js/landing-sky.js"), "utf8");
-  const serviceSky = readFileSync(join(root, "js/starfield.js"), "utf8");
-  assert.match(indexHtml, /js\/landing-sky\.js/);
-  assert.equal(indexHtml.includes("starfield.js"), false);
   assert.match(indexHtml, /<html lang="ja" class="home">/);
-  for (const html of [serviceHtml, companyHtml]) {
+  for (const html of [indexHtml, serviceHtml, companyHtml]) {
     assert.match(html, /<canvas id="starfield"/);
-    assert.match(html, /starfield\.js/);
-    assert.equal(html.includes("landing-sky.js"), false);
+    assert.match(html, /landing-sky\.js/);
+    assert.equal(html.includes("starfield.js"), false);
   }
+  assert.equal(/<html[^>]*class="home"/.test(serviceHtml), false);
+  assert.equal(/<html[^>]*class="home"/.test(companyHtml), false);
+  assert.match(siteCss, /^html \{[^}]*background:\s*#fbfbf5/m);
+  assert.match(siteCss, /^body \{[^}]*background:\s*#fbfbf5/m);
   assert.match(landing, /type: "Definition"/);
   assert.match(landing, /自由/);
   assert.match(landing, /TARGET_DEFS = 100/);
@@ -159,9 +160,6 @@ test("トップの星空は LP の星系のまま、星と線とラベルは寒�
   assert.equal(landing.includes("115,115,55"), false);
   assert.equal(landing.includes("145,135,45"), false);
   assert.match(landing, /#6673cc/);
-  assert.match(serviceSky, /WORD_COUNT/);
-  assert.match(serviceSky, /USER_COUNT/);
-  assert.equal(/definition/i.test(serviceSky), false);
 });
 
 test("トップのタイトルはセクション中央で、他ページの上下分割は残す", () => {
@@ -180,29 +178,22 @@ test("トップのタイトルはセクション中央で、他ページの上�
   assert.match(siteCss, /\.section-upper\s*\{[^}]*50vh/);
 });
 
-test("トップのヘッダーとフッターと本文の板が無く、他ページの板は残る", () => {
-  const homePlate =
-    /html\.home header,\s*html\.home footer,\s*html\.home \.text-area\s*\{[^}]*\}/;
-  const plate = siteCss.match(homePlate);
-  assert.ok(plate, "トップの板を外す指定が無い");
+test("全ページのヘッダーとフッターと本文の板が無く、画面写真の枠は残す", () => {
+  const plate = siteCss.match(/header,\s*footer,\s*\.text-area\s*\{[^}]*\}/);
+  assert.ok(plate, "板を外す指定が無い");
   assert.match(plate[0], /background:\s*none/);
   assert.match(plate[0], /backdrop-filter:\s*none/);
   assert.match(plate[0], /-webkit-backdrop-filter:\s*none/);
   assert.match(plate[0], /border:\s*none/);
-  assert.match(
-    siteCss,
-    /header,\s*footer,\s*\.text-area,\s*\.shot-grid figure\s*\{[^}]*background:\s*var\(--glass\)/,
-  );
-  assert.match(
-    siteCss,
-    /header,\s*footer,\s*\.text-area,\s*\.shot-grid figure\s*\{[^}]*backdrop-filter:\s*blur\(12px\)/,
-  );
-  assert.match(siteCss, /^header \{[^}]*border-bottom:\s*1px solid var\(--glass-edge\)/m);
-  assert.match(siteCss, /^footer \{[^}]*border-top:\s*1px solid var\(--glass-edge\)/m);
-  assert.match(siteCss, /^\.text-area \{[^}]*border:\s*1px solid var\(--glass-edge\)/m);
+  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*background:\s*var\(--glass\)/);
+  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*backdrop-filter:\s*blur\(12px\)/);
+  assert.match(siteCss, /\.shot-grid figure\s*\{[^}]*border:\s*1px solid var\(--glass-edge\)/);
+  assert.equal(/border-bottom:\s*1px solid var\(--glass-edge\)/.test(siteCss), false);
+  assert.equal(/border-top:\s*1px solid var\(--glass-edge\)/.test(siteCss), false);
+  assert.equal(/\.text-area \{[^}]*border:\s*1px solid/.test(siteCss), false);
 });
 
-test("トップの文字は濃色の細字で、他ページの白抜きは残す", () => {
+test("全ページのタイトルと本文は濃色の細字で、クリームの後光がある", () => {
   const title =
     /html\.home \.home-copy h1,\s*html\.home \.home-copy h2\s*\{[^}]*\}/;
   const titleRule = siteCss.match(title);
@@ -226,20 +217,39 @@ test("トップの文字は濃色の細字で、他ページの白抜きは残�
   assert.equal(/letter-spacing/.test(subtitleRule[0]), false);
   assert.equal(/translateX/.test(subtitleRule[0]), false);
   const chrome =
-    /html\.home header,\s*html\.home footer,\s*html\.home header a,\s*html\.home footer a,\s*html\.home \.menu > summary\s*\{[^}]*\}/;
+    /header,\s*footer,\s*header a,\s*footer a,\s*\.menu > summary\s*\{[^}]*\}/;
   const chromeRule = siteCss.match(chrome);
-  assert.ok(chromeRule, "トップのヘッダーとフッターの文字色が無い");
+  assert.ok(chromeRule, "ヘッダーとフッターの文字色が無い");
   assert.match(chromeRule[0], /color:\s*#04040a/);
+  assert.equal(/text-shadow/.test(chromeRule[0]), false);
   assert.match(
     siteCss,
-    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*color:\s*var\(--title\)/,
+    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*color:\s*#04040a/,
   );
   assert.match(
     siteCss,
-    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*text-shadow:\s*var\(--outline\)/,
+    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*font-weight:\s*200/,
   );
-  assert.match(siteCss, /\.subtitle\s*\{[^}]*color:\s*var\(--subtitle\)/);
-  assert.match(siteCss, /\.subtitle\s*\{[^}]*text-shadow:\s*var\(--outline\)/);
+  assert.match(
+    siteCss,
+    /\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*text-shadow:[^;]*#fbfbf5/,
+  );
+  const sectionTitle = siteCss.match(/\.section-upper h1,\s*\.section-upper h2\s*\{[^}]*\}/)[0];
+  assert.equal(/text-shadow:\s*var\(--outline\)/.test(sectionTitle), false);
+  assert.equal(/#000/.test(sectionTitle), false);
+  assert.match(siteCss, /\.subtitle\s*\{[^}]*color:\s*#04040a/);
+  assert.match(siteCss, /\.subtitle\s*\{[^}]*font-weight:\s*200/);
+  assert.match(siteCss, /\.subtitle\s*\{[^}]*text-shadow:[^;]*#fbfbf5/);
+  const subtitleBase = siteCss.match(/\.subtitle\s*\{[^}]*\}/)[0];
+  assert.equal(/text-shadow:\s*var\(--outline\)/.test(subtitleBase), false);
+  assert.equal(/#000/.test(subtitleBase), false);
+  const bodyCopy = siteCss.match(/^\.text-area \{\s*width:[^}]*\}/m)[0];
+  assert.match(bodyCopy, /color:\s*#04040a/);
+  assert.match(bodyCopy, /font-weight:\s*200/);
+  assert.match(bodyCopy, /text-shadow:[^;]*#fbfbf5/);
+  assert.equal(/#000/.test(bodyCopy), false);
+  assert.match(siteCss, /^body \{[^}]*color:\s*#04040a/m);
+  assert.match(siteCss, /^body \{[^}]*font-weight:\s*200/m);
   assert.equal(siteCss.includes("@font-face"), false);
   assert.equal(indexHtml.includes("fonts.googleapis"), false);
   assert.equal(indexHtml.includes("@font-face"), false);

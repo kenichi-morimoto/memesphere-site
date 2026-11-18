@@ -1,16 +1,15 @@
 /*
  * 合同会社ミームスフィアのサイト共通スタイル。
- * サービスとカンパニーの背景はごく薄い青（--sky）。星空キャンバスが背面。
- * トップ（html.home）の背景は LP 星空の色反転。セクションは画面中央。
- * サービスとカンパニーのヘッダーとフッターとテキストエリアは半透明（blur 12px、白の透過、境界線）。
- * トップではその板（背景、backdrop-filter、枠線）を外し、星空を端まで見せる。
- * サービスとカンパニーのセクションタイトルとサブタイトルの縁取りは LP 先頭の text-shadow。
- * トップのタイトルとサブタイトルは濃色 #04040a、font-weight 200、タイトルの字間は 0.25em。
- * 星と重なるときは空の色 #fbfbf5 の柔らかい後光。黒い縁取りは無い。
+ * 全ページの背景はクリーム #fbfbf5。星空キャンバス（landing-sky.js）が背面。星と線は寒色。
+ * ヘッダーとフッターと本文の半透明の板（背景、backdrop-filter、枠線）は置かない。
+ * 画面写真の枠は残す。
+ * タイトルと本文は濃色 #04040a、font-weight 200。
+ * タイトルとサブタイトルと本文は空の色 #fbfbf5 の柔らかい後光。黒い縁取りは無い。
+ * ヘッダーとフッターの文字は同じ濃色。後光はまだ付けない。
+ * トップ（html.home）のセクションは画面中央。タイトルの字間は 0.25em。
  * タイトルは字間 0.25em の末尾を戻し、グリフの中点をビューポート中央に置く。サブタイトルの字間は変えない。
- * トップのヘッダーとフッターの文字も同じ濃色。新しいフォントは読まない。
- * サービスとカンパニーのセクションは全画面。タイトルは上半分、本文は下半分。
- * ロゴマークは置かない。
+ * カンパニーと製品のセクションは全画面。タイトルは上半分、本文は下半分。
+ * ロゴマークは置かない。新しいフォントは読まない。
  */
 
 :root {
@@ -29,14 +28,15 @@
 
 html {
   scroll-snap-type: y proximity;
-  background: var(--sky);
+  background: #fbfbf5;
 }
 
 body {
   margin: 0;
-  background: var(--sky);
-  color: var(--ink);
+  background: #fbfbf5;
+  color: #04040a;
   font-family: sans-serif;
+  font-weight: 200;
 }
 
 .starfield {
@@ -56,11 +56,11 @@ body > footer {
 
 header,
 footer,
-.text-area,
-.shot-grid figure {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.text-area {
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
 }
 
 header {
@@ -75,12 +75,10 @@ header {
   flex-wrap: wrap;
   gap: 1rem;
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--glass-edge);
 }
 
 footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--glass-edge);
   text-align: center;
 }
 
@@ -100,7 +98,7 @@ footer {
 header a,
 footer a,
 .menu > summary {
-  color: var(--ink);
+  color: #04040a;
   text-decoration: none;
 }
 
@@ -181,23 +179,31 @@ main section.band {
 .section-upper h1,
 .section-upper h2 {
   margin: 0;
-  color: var(--title);
+  color: #04040a;
   font-size: clamp(2rem, 10vw, 6rem);
   font-weight: 200;
   letter-spacing: 0.1em;
   text-align: center;
-  text-shadow: var(--outline);
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
 .subtitle {
   margin: 0.75rem 0 0;
-  color: var(--subtitle);
+  color: #04040a;
   font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 200;
   letter-spacing: 0.06em;
   line-height: 1.7;
   text-align: center;
-  text-shadow: var(--outline);
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
 @media (min-width: 40rem) {
@@ -215,8 +221,14 @@ main section.band {
 .text-area {
   width: min(100%, 48rem);
   padding: 1rem 1.5rem 1.25rem;
-  border: 1px solid var(--glass-edge);
   text-align: center;
+  color: #04040a;
+  font-weight: 200;
+  text-shadow:
+    0 0 4px #fbfbf5,
+    0 0 8px #fbfbf5,
+    0 0 16px #fbfbf5,
+    0 0 28px #fbfbf5;
 }
 
 main section.gallery {
@@ -237,6 +249,9 @@ main section.gallery {
 .shot-grid figure {
   margin: 0;
   padding: 0.5rem;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-edge);
   text-align: center;
 }
@@ -295,11 +310,6 @@ img {
   }
 }
 
-html.home,
-html.home body {
-  background: #fbfbf5;
-}
-
 html.home .home-story {
   display: flex;
   flex-direction: column;
@@ -352,19 +362,10 @@ html.home .subtitle a {
     0 0 28px #fbfbf5;
 }
 
-html.home header,
-html.home footer,
-html.home header a,
-html.home footer a,
-html.home .menu > summary {
+header,
+footer,
+header a,
+footer a,
+.menu > summary {
   color: #04040a;
-}
-
-html.home header,
-html.home footer,
-html.home .text-area {
-  background: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: none;
 }
