@@ -1,0 +1,7 @@
+{
+  "name": "memesphere-site",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/content.test.mjs"
+  }
+}

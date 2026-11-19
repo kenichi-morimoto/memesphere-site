@@ -1,0 +1,77 @@
+<!--
+  製品ページ。公開パスは /products/。
+  先頭に PRODUCTS、その下に小さい WORDSPHERE。WORDSPHERE はボタン。
+  タップで全画面の概念モーダルを開く。閉じるのは画面左上の x と ESC だけ。
+  開いているあいだ背面はスクロールしない。
+  背景の平面は LP（screen-root）、wordflow、search の画面写真。
+  各平面は自転し、3枚の組は画面中央を重心に公転する。profile は使わない。
+  中央の文字は CONCEPT と指定の一文だけ。概念図は置かない。ギャラリーは置かない。
+  ページの地は全ページ共通のクリームの星空。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRODUCTS</title>
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+  <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+  <header>
+    <span class="brand">合同会社ミームスフィア</span>
+    <nav class="header-links" aria-label="ヘッダー">
+      <a href="/">TOP</a>
+      <a href="/products/">PRODUCTS</a>
+      <a href="/company/">COMPANY</a>
+    </nav>
+  </header>
+  <main>
+    <section id="products-lead" class="products-lead">
+      <h1>PRODUCTS</h1>
+      <button type="button" class="product-name" id="open-concept" aria-haspopup="dialog" aria-controls="concept-modal">WORDSPHERE</button>
+    </section>
+  </main>
+  <footer>
+    <nav aria-label="コンテンツ一覧">
+      <ul>
+        <li><a href="/">TOP</a></li>
+        <li><a href="/products/">PRODUCTS</a></li>
+        <li><a href="/company/">COMPANY</a></li>
+      </ul>
+    </nav>
+    <p class="copyright">©︎Memesphere G.K.</p>
+  </footer>
+  <div id="concept-modal" class="concept-modal" hidden role="dialog" aria-modal="true" aria-labelledby="concept-heading">
+    <div class="concept-stage" aria-hidden="true">
+        <div class="concept-orbit">
+          <div class="concept-slot concept-slot-a">
+            <div class="concept-plane">
+              <img src="../img/screen-root.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+          <div class="concept-slot concept-slot-b">
+            <div class="concept-plane">
+              <img src="../img/screen-wordflow.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+          <div class="concept-slot concept-slot-c">
+            <div class="concept-plane">
+              <img src="../img/screen-search.png" width="1280" height="800" alt="">
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="concept-veil" aria-hidden="true"></div>
+    <div class="concept-foreground">
+      <button type="button" class="concept-close" aria-label="閉じる">x</button>
+      <div class="concept-copy">
+        <p id="concept-heading" class="concept-kicker">CONCEPT</p>
+        <p id="concept">多様な言葉の定義から"人間"を浮かび上がらせるサービスです。</p>
+      </div>
+    </div>
+  </div>
+  <script src="../js/landing-sky.js"></script>
+  <script src="../js/concept-modal.js"></script>
+</body>
+</html>

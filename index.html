@@ -1,0 +1,66 @@
+<!--
+  合同会社ミームスフィアのトップ。
+  セクションは MEMESPHERE / PRODUCTS / FUTURE。
+  最初の画面はセクション1だけ。各セクションのタイトルは中央。
+  PRODUCTS の製品名 WORDSPHERE から製品ページ /products/ へ進む。
+  背景は全ページ共通。LP の先頭星空を色反転したクリーム。星と線は寒色。
+-->
+<!DOCTYPE html>
+<html lang="ja" class="home">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MEMESPHERE</title>
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
+  <header>
+    <span class="brand">合同会社ミームスフィア</span>
+    <nav class="header-links" aria-label="ヘッダー">
+      <a href="/">TOP</a>
+      <a href="/products/">PRODUCTS</a>
+      <a href="/company/">COMPANY</a>
+    </nav>
+  </header>
+  <main>
+    <section id="section-memesphere" class="home-story">
+      <div class="home-copy">
+        <h1>MEMESPHERE</h1>
+        <div class="text-area">
+          <p class="subtitle">ミーム工学で世界を変える。</p>
+        </div>
+      </div>
+    </section>
+    <section id="section-wordsphere" class="home-story">
+      <div class="home-copy">
+        <h2>PRODUCTS</h2>
+        <div class="text-area">
+          <p class="subtitle">WORDSPHERE</p>
+          <p class="subtitle">言葉の定義の違いから"人間"を浮かび上がらせるサービス</p>
+          <p class="subtitle"><a href="/products/">Wordsphereのページへ</a></p>
+        </div>
+      </div>
+    </section>
+    <section id="section-future" class="home-story">
+      <div class="home-copy">
+        <h2>FUTURE</h2>
+        <div class="text-area">
+          <p class="subtitle">ミーム（心の遺伝子）の理解を資本として社会にインパクトを与えていく</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <nav aria-label="コンテンツ一覧">
+      <ul>
+        <li><a href="/">TOP</a></li>
+        <li><a href="/products/">PRODUCTS</a></li>
+        <li><a href="/company/">COMPANY</a></li>
+      </ul>
+    </nav>
+    <p class="copyright">©︎Memesphere G.K.</p>
+  </footer>
+  <script src="js/landing-sky.js"></script>
+</body>
+</html>
